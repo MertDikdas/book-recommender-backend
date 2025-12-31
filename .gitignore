@@ -1,0 +1,17 @@
+# Data (large / generated)
+data/raw/
+data/processed/
+
+# Trained models
+models/
+*.pkl
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Python
+__pycache__/
+
+# Env / secrets
+.env
+
