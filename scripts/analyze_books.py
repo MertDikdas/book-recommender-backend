@@ -1,7 +1,7 @@
 import csv
 from pathlib import Path
 
-csv_path = Path("data/raw/fantasy_books.csv")
+csv_path = Path("data/raw/books_raw.csv")
 
 with csv_path.open("r", encoding="utf-8") as f:
     reader = csv.DictReader(f)
