@@ -1,25 +1,27 @@
 import requests
 import csv
+import numpy as np
+import pandas as pd
 from pathlib import Path
 
 # Define constants
-SUBJECTS = ["fantasy", "science_fiction", "romance", "history"]
-LIMIT_PER_SUBJECT = 200
+SUBJECTS = ["fantasy", "science_fiction", "romance", "history","literature","mystery_and_detective_stories", "juvenile_literature", "autobiography","programming","psychology"]
+LIMIT_PER_SUBJECT = 1000
 
 RAW_DIR = Path("data/raw")
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 csv_path = RAW_DIR / "books_raw.csv"
 
-fieldnames = ["work_key", "title", "first_publish_year", "authors", "source_subject"]
+fieldnames = ["work_key", "title", "first_publish_year", "authors", "source_subject","subjects"]
 
 #fetch data from OpenLibrary API for a given subject
+
 def fetch_subject(subject: str, limit: int = LIMIT_PER_SUBJECT):
     url = f"https://openlibrary.org/subjects/{subject}.json"
     params = {"limit": limit}
     r = requests.get(url, params=params, timeout=30)
     r.raise_for_status()
     return r.json()
-
 
 with csv_path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -39,12 +41,17 @@ with csv_path.open("w", newline="", encoding="utf-8") as f:
                 name = a.get("name")
                 if name:
                     authors.append(name)
+            subjects = []
+            for s in w.get("subject", []):
+                subjects.append(s)
+            
 
             row = {
                 "work_key": w.get("key"),
                 "title": title,
                 "first_publish_year": year,
                 "authors": "; ".join(authors),
+                "subjects": "; ".join(subjects),
                 "source_subject": subject,
             }
             writer.writerow(row)
