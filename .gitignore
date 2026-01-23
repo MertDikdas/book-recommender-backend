@@ -1,9 +1,10 @@
 # Data (large / generated)
 data/raw/
 data/processed/
+data/ratings.csv
 
 # Trained models
-models/
+model/
 *.pkl
 
 # Jupyter
@@ -14,4 +15,7 @@ __pycache__/
 
 # Env / secrets
 .env
+
+#Database
+books.db
 
