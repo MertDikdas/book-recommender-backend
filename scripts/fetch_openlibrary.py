@@ -5,7 +5,9 @@ import pandas as pd
 from pathlib import Path
 
 # Define constants
-SUBJECTS = ["fantasy", "science_fiction", "romance", "history","literature","mystery_and_detective_stories", "juvenile_literature", "autobiography","programming","psychology"]
+SUBJECTS = ["fantasy", "science_fiction", "romance", "history","literature","mystery_and_detective_stories", "juvenile_literature",
+             "autobiography","programming","psychology","poetry","short_stories","young_adult_fiction", "biology", "chemistry","mathematics",
+             "business__economics", "finance", "ancient_civilization","archaeology","cooking"]
 LIMIT_PER_SUBJECT = 1000
 
 RAW_DIR = Path("data/raw")
@@ -23,6 +25,7 @@ def fetch_subject(subject: str, limit: int = LIMIT_PER_SUBJECT):
     r.raise_for_status()
     return r.json()
 
+"""
 with csv_path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     writer.writeheader()
@@ -55,5 +58,6 @@ with csv_path.open("w", newline="", encoding="utf-8") as f:
                 "source_subject": subject,
             }
             writer.writerow(row)
-
 print(f"Saved raw books to {csv_path}")
+"""
+
