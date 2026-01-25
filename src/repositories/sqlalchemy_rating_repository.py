@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from domains.entities.models import Rating as RatingEntity
 from src.repositories.rating_repository import RatingRepository
 from domains.orm.Rating import Rating as RatingORM
-from scripts.mapper.orm_to_entity_mapper import _rating_orm_to_entity
+from src.mappers.orm_to_entity_mapper import _rating_orm_to_entity
 
 
 class SqlAlchemyRatingRepository(RatingRepository):

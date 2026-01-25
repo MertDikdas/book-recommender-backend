@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from domains.entities.models import User as UserEntity
 from src.repositories.user_repository import UserRepository
 from src.domains.orm.User import User as UserORM
-from scripts.mapper.orm_to_entity_mapper import _user_orm_to_entity
+from src.mappers.orm_to_entity_mapper import _user_orm_to_entity
 
 class SqlAlchemyUserRepository(UserRepository):
     def __init__(self, db: Session):
