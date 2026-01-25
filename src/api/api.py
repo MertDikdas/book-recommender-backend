@@ -4,8 +4,8 @@ from typing import Optional, List
 
 from sqlalchemy.orm import Session
 
-from scripts.database.database import Base, SessionLocal, engine
-from scripts.models import User, Book, Rating
+from src.database.database import Base, SessionLocal, engine
+from src.domains.orm import User, Book, Rating
 from src.api.controllers.user_controller import router as user_router
 
 

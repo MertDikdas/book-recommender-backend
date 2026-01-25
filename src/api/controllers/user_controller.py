@@ -5,7 +5,7 @@ from pydantic import BaseModel, ConfigDict
 
 from scripts.database import SessionLocal
 from src.services.user_service import UserService
-from scripts.sqlalchemy_repositories.user_repository import SqlAlchemyUserRepository
+from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
 
 
 router = APIRouter(prefix="/users", tags=["users"])

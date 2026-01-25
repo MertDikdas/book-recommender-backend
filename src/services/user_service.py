@@ -1,5 +1,5 @@
 from typing import Optional
-from src.domains.models import User as UserEntity
+from domains.entities.models import User as UserEntity
 from src.repositories.user_repository import UserRepository
 
 
