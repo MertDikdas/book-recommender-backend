@@ -6,4 +6,4 @@ class RatingEntity:
     id: Optional[int]
     user_id: int
     book_id: int
-    value: int
+    rating: int

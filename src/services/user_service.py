@@ -13,4 +13,8 @@ class UserService:
             return None
 
         user = UserEntity(id=None, username=username)
-        return self.user_repo.add(user)
+        user = self.user_repo.add(user)
+        return user
+
+    def get_user(self, username: str) -> Optional[UserEntity]:
+        return self.user_repo.get_by_username(username)

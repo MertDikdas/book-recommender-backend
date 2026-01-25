@@ -19,4 +19,5 @@ class SqlAlchemyUserRepository(UserRepository):
         self.db.add(orm)
         self.db.flush()   # id oluşsun
         self.db.refresh(orm)
+        self.db.commit()
         return _user_orm_to_entity(orm)

@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 
 from sqlalchemy.orm import Session
@@ -7,7 +7,6 @@ from sqlalchemy.orm import Session
 from src.database.database import Base, SessionLocal, engine
 from src.domains.orm import UserORM, BookORM, RatingORM
 from src.api.controllers.user_controller import router as user_router
-
 
 
 app = FastAPI(title="Book Recommender API")
@@ -45,8 +44,7 @@ class BookOut(BaseModel):
     author: Optional[str]
     genre: Optional[str]
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RatingOut(BaseModel):
@@ -55,8 +53,7 @@ class RatingOut(BaseModel):
     book_id: int
     rating: int
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 # ---------- Helper: user getir / oluştur ----------
