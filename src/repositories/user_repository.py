@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Optional
-from ..domains.models import User
+from ..domains.entities.user_entity import UserEntity
 
 class UserRepository(ABC):
     @abstractmethod
-    def get_by_username(self, username: str) -> Optional[User]: ...
+    def get_by_username(self, username: str) -> Optional[UserEntity]: ...
     
     @abstractmethod
-    def add(self, user: User) -> User: ...
+    def add(self, user: UserEntity) -> UserEntity: ...

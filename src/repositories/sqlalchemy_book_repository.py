@@ -1,8 +1,8 @@
 from typing import Optional
 from sqlalchemy.orm import Session
-from domains.entities.models import Book as BookEntity
+from domains.entities.book_entity import BookEntity
 from src.repositories.book_repository import BookRepository
-from src.domains.orm import Book as BookORM
+from src.domains.orm.book_orm import BookORM
 from src.mappers.orm_to_entity_mapper import _book_orm_to_entity
 
 class SqlAlchemyBookRepository(BookRepository):

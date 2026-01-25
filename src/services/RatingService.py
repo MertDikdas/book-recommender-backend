@@ -1,5 +1,5 @@
 # src/domain/services.py
-from ..domains.models import User, Rating
+from ..domains.entities.user_entity import UserEntity, RatingEntity
 from ..repositories.rating_repository import RatingRepository
 from ..repositories.user_repository import UserRepository
 from ..repositories.book_repository import BookRepository
@@ -15,14 +15,14 @@ class RatingService:
         self.book_repo = book_repo
         self.rating_repo = rating_repo
 
-    def rate_book(self, username: str, book_id: int, value: int) -> Rating:
+    def rate_book(self, username: str, book_id: int, value: int) -> RatingEntity:
         if value < 1 or value > 5:
             raise ValueError("Rating 1 ile 5 arasında olmalı")
 
         # 1) kullanıcıyı bul / oluştur
         user = self.user_repo.get_by_username(username)
         if user is None:
-            user = User(id=None, username=username)
+            user = UserEntity(id=None, username=username)
             user = self.user_repo.add(user)
 
         # 2) kitap var mı?
@@ -36,5 +36,5 @@ class RatingService:
             existing.value = value
             return self.rating_repo.update(existing)
 
-        rating = Rating(id=None, user_id=user.id, book_id=book_id, value=value)
+        rating = RatingEntity(id=None, user_id=user.id, book_id=book_id, value=value)
         return self.rating_repo.add(rating)

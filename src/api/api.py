@@ -5,7 +5,7 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 
 from src.database.database import Base, SessionLocal, engine
-from src.domains.orm import User, Book, Rating
+from src.domains.orm import UserORM, BookORM, RatingORM
 from src.api.controllers.user_controller import router as user_router
 
 
@@ -61,12 +61,12 @@ class RatingOut(BaseModel):
 
 # ---------- Helper: user getir / oluştur ----------
 
-def get_or_create_user(db: Session, username: str) -> User:
-    user = db.query(User).filter_by(username=username).first()
+def get_or_create_user(db: Session, username: str) -> UserORM:
+    user = db.query(UserORM).filter_by(username=username).first()
     if user:
         return user
 
-    user = User(username=username)
+    user = UserORM(username=username)
     db.add(user)
     db.commit()
     db.refresh(user)
@@ -77,7 +77,7 @@ def get_or_create_user(db: Session, username: str) -> User:
 
 @app.post("/books", response_model=BookOut, tags=["books"])
 def create_book(book_in: BookCreate, db: Session = Depends(get_db)):
-    book = Book(
+    book = BookORM(
         title=book_in.title,
         author=book_in.author,
         genre=book_in.genre,
@@ -91,7 +91,7 @@ def create_book(book_in: BookCreate, db: Session = Depends(get_db)):
 
 @app.get("/books", response_model=List[BookOut], tags=["books"])
 def list_books(db: Session = Depends(get_db)):
-    books = db.query(Book).all()
+    books = db.query(BookORM).all()
     return books
 
 
@@ -105,13 +105,13 @@ def create_or_update_rating(rating_in: RatingCreate, db: Session = Depends(get_d
     user = get_or_create_user(db, rating_in.username)
 
     # kitap var mı?
-    book = db.query(Book).filter_by(id=rating_in.book_id).first()
+    book = db.query(BookORM).filter_by(id=rating_in.book_id).first()
     if not book:
         raise HTTPException(status_code=404, detail="Book not found")
 
     # aynı user+book için rating varsa update et
     existing = (
-        db.query(Rating)
+        db.query(RatingORM)
         .filter_by(user_id=user.id, book_id=book.id)
         .first()
     )
@@ -122,7 +122,7 @@ def create_or_update_rating(rating_in: RatingCreate, db: Session = Depends(get_d
         return existing
 
     # yoksa yeni rating
-    rating = Rating(
+    rating = RatingORM(
         user_id=user.id,
         book_id=book.id,
         rating=rating_in.rating,
@@ -135,9 +135,9 @@ def create_or_update_rating(rating_in: RatingCreate, db: Session = Depends(get_d
 
 @app.get("/users/{username}/ratings", response_model=List[RatingOut], tags=["ratings"])
 def get_user_ratings(username: str, db: Session = Depends(get_db)):
-    user = db.query(User).filter_by(username=username).first()
+    user = db.query(UserORM).filter_by(username=username).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    ratings = db.query(Rating).filter_by(user_id=user.id).all()
+    ratings = db.query(RatingORM).filter_by(user_id=user.id).all()
     return ratings

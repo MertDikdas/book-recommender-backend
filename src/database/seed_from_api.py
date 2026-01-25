@@ -1,8 +1,8 @@
 import requests
 from scripts.fetch_openlibrary import fetch_subject, SUBJECTS, LIMIT_PER_SUBJECT
-from scripts.mapper.json_to_book import JsonToBookMapper
-from scripts.database.database import SessionLocal
-from scripts.models import Book
+from src.mappers.json_to_book import JsonToBookMapper
+from src.database.database import SessionLocal
+from src.domains.entities import BookEntity
 
 def save_books_to_db(data):
     mapper = JsonToBookMapper(data)
@@ -10,14 +10,14 @@ def save_books_to_db(data):
     
     db = SessionLocal()
     for book_info in books_data:
-        book = Book(
+        book = BookEntity(
             work_key=book_info["work_key"],
             title=book_info["title"],
             author=book_info["authors"],
             genre=book_info["genre"],
             description=book_info["subjects"]
         )
-        existing = db.query(Book).filter_by(work_key=book_info["work_key"]).first()
+        existing = db.query(BookEntity).filter_by(work_key=book_info["work_key"]).first()
         if existing:
             existing_genre = existing.genre
             if existing_genre and book.genre:

@@ -1,9 +1,9 @@
 
 from typing import Optional
 from sqlalchemy.orm import Session
-from domains.entities.models import User as UserEntity
+from src.domains.entities.user_entity import UserEntity
 from src.repositories.user_repository import UserRepository
-from src.domains.orm.User import User as UserORM
+from src.domains.orm.user_orm import UserORM
 from src.mappers.orm_to_entity_mapper import _user_orm_to_entity
 
 class SqlAlchemyUserRepository(UserRepository):

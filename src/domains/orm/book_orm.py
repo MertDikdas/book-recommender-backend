@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from src.database.database import Base
 
-class Book(Base):
+class BookORM(Base):
     __tablename__ = "books"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -13,7 +13,7 @@ class Book(Base):
     genre = Column(String(255), nullable=True, index=True)   
     description = Column(Text)   
 
-    ratings = relationship("Rating", back_populates="book")
+    ratings = relationship("RatingORM", back_populates="book")
 
     def __repr__(self):
         return f"<Book(id={self.id}, title='{self.title}')>"
