@@ -1,5 +1,5 @@
-from src.domains.models import User as UserEntity, Book as BookEntity, Rating as RatingEntity
-from scripts.models import User as UserORM, Book as BookORM, Rating as RatingORM
+from domains.entities.models import User as UserEntity, Book as BookEntity, Rating as RatingEntity
+from src.domains.orm import User as UserORM, Book as BookORM, Rating as RatingORM
 
 def _user_orm_to_entity(orm: UserORM) -> UserEntity:
     return UserEntity(id=orm.id, username=orm.username)

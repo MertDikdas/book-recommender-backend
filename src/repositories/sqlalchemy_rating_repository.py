@@ -1,9 +1,9 @@
 # scripts/repositories.py
 from typing import Optional
 from sqlalchemy.orm import Session
-from src.domains.models import Rating as RatingEntity
+from domains.entities.models import Rating as RatingEntity
 from src.repositories.rating_repository import RatingRepository
-from scripts.models import Rating as RatingORM
+from domains.orm.Rating import Rating as RatingORM
 from scripts.mapper.orm_to_entity_mapper import _rating_orm_to_entity
 
 
