@@ -9,11 +9,10 @@ from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
 from src.domains.orm.user_orm import UserORM
 from src.mappers.entity_to_orm_mapper import user_entity_to_orm
 
-#Controller for user
-
+#Router for user
 router = APIRouter(prefix="/users", tags=["users"])
 
-
+#pydantic class for json body
 class UserCreate(BaseModel):
     username: str
 
@@ -23,7 +22,7 @@ class UserOut(BaseModel):
     username: str
     model_config = ConfigDict(from_attributes=True)
 
-
+#database session creater
 def get_db():
     db = SessionLocal()
     try:
@@ -31,12 +30,12 @@ def get_db():
     finally:
         db.close()
 
-
+#for accessing service with db
 def get_user_service(db: Session = Depends(get_db)) -> UserService:
-    repo = SqlAlchemyUserRepository(db)   # ✅ DOĞRU OLAN BU
+    repo = SqlAlchemyUserRepository(db)   
     return UserService(repo)
 
-
+#creates user
 @router.post("", response_model=UserOut)
 def create_user(
     user_in: UserCreate,
@@ -47,6 +46,7 @@ def create_user(
         raise HTTPException(status_code=400, detail="User already exists!")
     return user
 
+#get user
 @router.get("", response_model=UserOut)
 def get_user(
     user_in: UserCreate,

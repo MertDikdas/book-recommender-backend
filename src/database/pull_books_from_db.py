@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
-from scripts.models import Book, Rating, User
+from src.domains.orm import BookORM
 import pandas as pd
 
 def pull_books_from_db(db: Session) -> pd.DataFrame:
-    books = db.query(Book).all()
+    books = db.query(BookORM).all()
     data = []
     for book in books:
         data.append({
