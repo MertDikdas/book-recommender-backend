@@ -7,11 +7,13 @@ from sqlalchemy.orm import Session
 from src.database.database import Base, SessionLocal, engine
 from src.domains.orm import UserORM, BookORM, RatingORM
 from src.api.controllers.user_controller import router as user_router
+from src.api.controllers.book_controller import router as book_router
 
 
 app = FastAPI(title="Book Recommender API")
 
 app.include_router(user_router)
+app.include_router(book_router)
 
 # ---------- DB dependency ----------
 
@@ -25,11 +27,7 @@ def get_db():
 
 # ---------- Pydantic şemaları ----------
 
-class BookCreate(BaseModel):
-    title: str
-    author: Optional[str] = None
-    genre: Optional[str] = None
-    description: Optional[str] = None
+
 
 
 class RatingCreate(BaseModel):
@@ -38,13 +36,6 @@ class RatingCreate(BaseModel):
     rating: int
 
 
-class BookOut(BaseModel):
-    id: int
-    title: str
-    author: Optional[str]
-    genre: Optional[str]
-
-    model_config = ConfigDict(from_attributes=True)
 
 
 class RatingOut(BaseModel):
@@ -72,24 +63,8 @@ def get_or_create_user(db: Session, username: str) -> UserORM:
 
 # ---------- CONTROLLER / ENDPOINTLER ----------
 
-@app.post("/books", response_model=BookOut, tags=["books"])
-def create_book(book_in: BookCreate, db: Session = Depends(get_db)):
-    book = BookORM(
-        title=book_in.title,
-        author=book_in.author,
-        genre=book_in.genre,
-        description=book_in.description,
-    )
-    db.add(book)
-    db.commit()
-    db.refresh(book)
-    return book
 
 
-@app.get("/books", response_model=List[BookOut], tags=["books"])
-def list_books(db: Session = Depends(get_db)):
-    books = db.query(BookORM).all()
-    return books
 
 
 @app.post("/ratings", response_model=RatingOut, tags=["ratings"])
