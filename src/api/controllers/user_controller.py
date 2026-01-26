@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel, ConfigDict
 
-from scripts.database import SessionLocal
+from src.database.database import SessionLocal
 from src.services.user_service import UserService
 from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
 from src.domains.orm.user_orm import UserORM
