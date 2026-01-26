@@ -6,7 +6,6 @@ from pydantic import BaseModel, ConfigDict
 from src.database.database import SessionLocal
 from src.services.user_service import UserService
 from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
-from src.domains.orm.user_orm import UserORM
 from src.mappers.entity_to_orm_mapper import user_entity_to_orm
 
 #Router for user
@@ -22,7 +21,6 @@ class UserOut(BaseModel):
     username: str
     model_config = ConfigDict(from_attributes=True)
 
-#database session creater
 def get_db():
     db = SessionLocal()
     try:

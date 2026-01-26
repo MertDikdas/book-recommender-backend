@@ -1,8 +1,8 @@
 # src/domain/services.py
-from ..domains.entities.user_entity import UserEntity, RatingEntity
-from ..repositories.rating_repository import RatingRepository
-from ..repositories.user_repository import UserRepository
-from ..repositories.book_repository import BookRepository
+from src.domains.entities.rating_entity import RatingEntity
+from src.repositories.rating_repository import RatingRepository
+from src.repositories.user_repository import UserRepository
+from src.repositories.book_repository import BookRepository
 
 class RatingService:
     def __init__(
@@ -17,24 +17,23 @@ class RatingService:
 
     def rate_book(self, username: str, book_id: int, value: int) -> RatingEntity:
         if value < 1 or value > 5:
-            raise ValueError("Rating 1 ile 5 arasında olmalı")
+            raise ValueError("Rating must be between 1 and 5")
 
-        # 1) kullanıcıyı bul / oluştur
+        # 1) find the user if not exist raise error
         user = self.user_repo.get_by_username(username)
         if user is None:
-            user = UserEntity(id=None, username=username)
-            user = self.user_repo.add(user)
+            raise ValueError(f"User {username} could not be found")
 
-        # 2) kitap var mı?
+        # 2) find the book if not exist raise error
         book = self.book_repo.get_by_id(book_id)
         if book is None:
-            raise ValueError(f"Book id={book_id} bulunamadı")
+            raise ValueError(f"Book id={book_id} not found")
 
-        # 3) daha önce rating var mı? -> update / yoksa -> create
+        # 3) check existing rating -> update / create
         existing = self.rating_repo.get_for_user_and_book(user.id, book_id)
         if existing:
             existing.value = value
             return self.rating_repo.update(existing)
 
-        rating = RatingEntity(id=None, user_id=user.id, book_id=book_id, value=value)
+        rating = RatingEntity(id=None, user_id=user.id, book_id=book_id, rating=value)
         return self.rating_repo.add(rating)

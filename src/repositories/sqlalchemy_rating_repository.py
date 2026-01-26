@@ -1,9 +1,9 @@
 # scripts/repositories.py
 from typing import Optional
 from sqlalchemy.orm import Session
-from domains.entities.rating_entity import RatingEntity
+from src.domains.entities.rating_entity import RatingEntity
 from src.repositories.rating_repository import RatingRepository
-from domains.orm.rating_orm import RatingORM
+from src.domains.orm.rating_orm import RatingORM
 from src.mappers.orm_to_entity_mapper import _rating_orm_to_entity
 
 
@@ -23,11 +23,12 @@ class SqlAlchemyRatingRepository(RatingRepository):
         orm = RatingORM(
             user_id=rating.user_id,
             book_id=rating.book_id,
-            rating=rating.value,
+            rating=rating.rating,
         )
         self.db.add(orm)
         self.db.flush()
         self.db.refresh(orm)
+        self.db.commit()
         return _rating_orm_to_entity(orm)
 
     def update(self, rating: RatingEntity) -> RatingEntity:
@@ -42,4 +43,5 @@ class SqlAlchemyRatingRepository(RatingRepository):
         orm.rating = rating.value
         self.db.flush()
         self.db.refresh(orm)
+        self.db.commit()
         return _rating_orm_to_entity(orm)

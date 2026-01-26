@@ -20,5 +20,5 @@ def _rating_orm_to_entity(orm: RatingORM) -> RatingEntity:
         id=orm.id,
         user_id=orm.user_id,
         book_id=orm.book_id,
-        value=orm.rating,
+        rating=orm.rating,
     )
