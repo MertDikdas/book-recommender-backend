@@ -12,11 +12,4 @@ app.include_router(user_router)
 app.include_router(book_router)
 app.include_router(rating_router) 
 
-# ---------- DB dependency ----------
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()

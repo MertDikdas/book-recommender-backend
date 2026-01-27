@@ -8,8 +8,9 @@ from pathlib import Path
 SUBJECTS = ["fantasy", "science_fiction", "romance", "history","literature","mystery_and_detective_stories", "juvenile_literature",
              "autobiography","programming","psychology","poetry","short_stories","young_adult_fiction", "biology", "chemistry","mathematics",
              "business__economics", "finance", "ancient_civilization","archaeology","cooking"]
-LIMIT_PER_SUBJECT = 1000
-
+LIMIT_PER_SUBJECT = 5000
+PER_REQUEST_LIMIT = 1000
+BASE_URL = "https://openlibrary.org"
 RAW_DIR = Path("data/raw")
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 csv_path = RAW_DIR / "books_raw.csv"
@@ -18,13 +19,14 @@ fieldnames = ["work_key", "title", "first_publish_year", "authors", "source_subj
 
 #fetch data from OpenLibrary API for a given subject
 
-def fetch_subject(subject: str, limit: int = LIMIT_PER_SUBJECT):
-    url = f"https://openlibrary.org/subjects/{subject}.json"
-    params = {"limit": limit}
-    r = requests.get(url, params=params, timeout=30)
+def fetch_subject(subject: str, limit: int = PER_REQUEST_LIMIT, offset: int = 0) -> dict:
+    params = {
+        "limit": min(limit, PER_REQUEST_LIMIT),  # tek istekte max 1000
+        "offset": offset,
+    }
+    r = requests.get(f"{BASE_URL}/subjects/{subject}.json", params=params, timeout=15)
     r.raise_for_status()
     return r.json()
-
 """
 with csv_path.open("w", newline="", encoding="utf-8") as f:
     writer = csv.DictWriter(f, fieldnames=fieldnames)
