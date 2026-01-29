@@ -9,6 +9,7 @@ def _book_orm_to_entity(orm: BookORM) -> BookEntity:
     return BookEntity(
         id=orm.id,
         title=orm.title,
+        work_key=orm.work_key,
         author=orm.author,
         genre=orm.genre,
         description=orm.description,

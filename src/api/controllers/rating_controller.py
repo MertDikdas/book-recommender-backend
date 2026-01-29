@@ -37,7 +37,7 @@ def get_rating_service(db: Session = Depends(get_db)) -> RatingService:
     book_repo = SqlAlchemyBookRepository(db)
     return RatingService(user_repo, book_repo, rating_repo)
 
-
+#Create rating
 @router.post("", response_model=RatingOut)
 def create_rating(
     rating_in: RatingCreate,
@@ -51,3 +51,24 @@ def create_rating(
     if rating is None:
         raise HTTPException(status_code=400, detail="Could not create or update rating")
     return rating
+
+#Get rating for user and book
+@router.get("/user/{username}/book/{book_id}", response_model=RatingOut)
+def get_rating_for_user_and_book(
+    username: str,
+    book_id: int,
+    service: RatingService = Depends(get_rating_service),
+):
+    rating = service.get_rating_for_user_and_book(username, book_id)
+    if rating is None:
+        raise HTTPException(status_code=404, detail="Rating not found")
+    return rating
+
+#Get ratings for user
+@router.get("/user/{username}", response_model=List[RatingOut])
+def get_ratings_for_user(
+    username: str,
+    service: RatingService = Depends(get_rating_service),
+):
+    ratings = service.get_ratings_for_user(username)
+    return ratings
