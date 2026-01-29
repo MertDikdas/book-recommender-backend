@@ -13,3 +13,6 @@ class RatingRepository(ABC):
     
     @abstractmethod
     def update(self, rating: RatingEntity) -> RatingEntity: ...
+
+    @abstractmethod
+    def get_for_user(self, user_id: int) -> Iterable[RatingEntity]: ...
