@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
 from src.database.database import SessionLocal
 from src.services.recommendation_service import RecommendationService
@@ -8,21 +8,18 @@ from src.repositories.sqlalchemy_rating_repository import SqlAlchemyRatingReposi
 from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
 from src.repositories.sqlalchemy_book_repository import SqlAlchemyBookRepository
 
+
 # Router for recommendations
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 
 # pydantic class for json body
 
-class RecommendationRequest(BaseModel):
-    user_id: int
-    top_k: int = 10
-
 class BookOut(BaseModel):
     id: int
     title: str
-    author: str
-    genre: str
-    description: str
+    author: Optional[str] 
+    genre: Optional[str] 
+    description: Optional[str]
     model_config = ConfigDict(from_attributes=True)
 
 def get_db():
@@ -41,13 +38,15 @@ def get_recommendation_service(
     return RecommendationService(user_repo, book_repo, rating_repo)
 
 # for accessing service with db
-@router.get("", response_model=List[BookOut])
+@router.get("/{user_name}", response_model=List[BookOut])
 def get_recommendations(
-    user_id: int,
+    user_name: str,
     service: RecommendationService = Depends(get_recommendation_service)
 ):
 
     recommendations = service.get_recommendations_for_user(
-        user_id,
+        user_name,
     )
+    if recommendations is None:
+        raise HTTPException(status_code=404, detail="User not found")
     return recommendations

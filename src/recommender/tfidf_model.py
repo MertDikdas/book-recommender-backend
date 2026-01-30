@@ -13,36 +13,55 @@ df = pull_books_from_db(db)
 # Create a weighted text field with more emphasis on source_subject
 df["text_weighted"] = (
     df["title"].fillna("") + " " +
-    (df["author"].fillna("") + " ") +
-    (df["genre"].fillna("")*3 + " ") +
-    df["description"].fillna("")*3 
+    df["author"].fillna("") + " " +
+    (df["genre"].fillna("") + " ") * 3 +
+    (df["description"].fillna(" ") + " ") * 3
 )
 
 # Vectorize the text data
 vectorizer = TfidfVectorizer(
-    stop_words="english"
+    stop_words="english",
+    max_features=10000,
 )
 
 # Vectorize the weighted text data for improved recommendations
 X_w = vectorizer.fit_transform(df["text_weighted"])
 
-
+work_key_to_pos = {
+    str(wk): i
+    for i, wk in enumerate(df["work_key"].tolist())
+}
 
 
 # Recommendation function for a user based on their ratings
-def recommend_for_user(user_ratings, top_k=20) -> list[BookEntity]:
+def recommend_for_user(user_ratings, user_books, top_k=20) -> list[BookEntity] | None:
     # If user has no ratings, return random books
     if len(user_ratings) == 0:
-        return [BookEntity(**row.to_dict()) for _, row in df.sample(top_k).iterrows()]
+        return [BookEntity(id = df.iloc[i]["id"], work_key=df.iloc[i]["work_key"], title=df.iloc[i]["title"], author=df.iloc[i]["author"], genre=df.iloc[i]["genre"], description=df.iloc[i]["description"]) for i in df.sample(top_k).index]
     item_vectors = []
     weights = []
     # Build user profile
     for row in user_ratings:
         rating = row.rating
-        idx = row.book_id
-        v = X_w[idx].toarray()[0]
+        wk = user_books[row.book_id].work_key
+        pos = work_key_to_pos.get(wk)
+        if pos is None:
+            continue
+        v = X_w[pos].toarray()[0]
         item_vectors.append(v)
         weights.append(rating)
+    if not item_vectors:
+        return [
+            BookEntity(
+                id=df.iloc[i]["id"],
+                work_key=df.iloc[i]["work_key"],
+                title=df.iloc[i]["title"],
+                author=df.iloc[i]["author"],
+                genre=df.iloc[i]["genre"],
+                description=df.iloc[i]["description"],
+            )
+            for i in df.sample(top_k).index
+        ]
     # Create user profile as weighted average of item vectors    
     item_matrix = np.vstack(item_vectors)
     weights = np.array(weights)
@@ -50,8 +69,12 @@ def recommend_for_user(user_ratings, top_k=20) -> list[BookEntity]:
     # Compute similarity scores
     similarity_scores = cosine_similarity(user_profile.reshape(1, -1), X_w).ravel()
     # Exclude already rated books
-    rated_idx = {row.book_id for row in user_ratings}
     # Get top-k recommendations
+    rated_idx = {
+        work_key_to_pos.get(user_books[row.book_id].work_key)
+        for row in user_ratings
+        if work_key_to_pos.get(user_books[row.book_id].work_key) is not None
+    }
     idx_scores = list(enumerate(similarity_scores))
     idx_scores = [
         (i, s) for i, s in idx_scores

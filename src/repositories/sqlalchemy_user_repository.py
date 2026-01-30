@@ -21,3 +21,7 @@ class SqlAlchemyUserRepository(UserRepository):
         self.db.refresh(orm)
         self.db.commit()
         return _user_orm_to_entity(orm)
+    
+    def get_by_id(self, user_id: int) -> Optional[UserEntity]:
+        orm = self.db.query(UserORM).filter_by(id=user_id).first()
+        return _user_orm_to_entity(orm) if orm else None
