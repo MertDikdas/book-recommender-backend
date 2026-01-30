@@ -13,9 +13,9 @@ df = pull_books_from_db(db)
 # Create a weighted text field with more emphasis on source_subject
 df["text_weighted"] = (
     df["title"].fillna("") + " " +
-    (df["author"].fillna("") + " "*5) +
-    (df["genre"].fillna("") + " ") +
-    df["description"].fillna("") 
+    (df["author"].fillna("") + " ") +
+    (df["genre"].fillna("")*3 + " ") +
+    df["description"].fillna("")*3 
 )
 
 # Vectorize the text data
@@ -28,17 +28,18 @@ X_w = vectorizer.fit_transform(df["text_weighted"])
 
 
 
+
 # Recommendation function for a user based on their ratings
-def recommend_for_user(user_ratings, top_k=10) -> list[BookEntity]:
+def recommend_for_user(user_ratings, top_k=20) -> list[BookEntity]:
     # If user has no ratings, return random books
-    if user_ratings.empty:
+    if len(user_ratings) == 0:
         return [BookEntity(**row.to_dict()) for _, row in df.sample(top_k).iterrows()]
     item_vectors = []
     weights = []
     # Build user profile
-    for row in user_ratings.itertuples(index=False):
+    for row in user_ratings:
         rating = row.rating
-        idx = row.id
+        idx = row.book_id
         v = X_w[idx].toarray()[0]
         item_vectors.append(v)
         weights.append(rating)
@@ -49,7 +50,7 @@ def recommend_for_user(user_ratings, top_k=10) -> list[BookEntity]:
     # Compute similarity scores
     similarity_scores = cosine_similarity(user_profile.reshape(1, -1), X_w).ravel()
     # Exclude already rated books
-    rated_idx = {row.id for _, row in user_ratings.iterrows()}
+    rated_idx = {row.book_id for row in user_ratings}
     # Get top-k recommendations
     idx_scores = list(enumerate(similarity_scores))
     idx_scores = [
@@ -60,4 +61,4 @@ def recommend_for_user(user_ratings, top_k=10) -> list[BookEntity]:
     top_idx = sorted(idx_scores, key=lambda x: x[1], reverse=True)
     # Get only indices
     top_idx = [i for i, s in top_idx[:top_k]]
-    return [BookEntity(**df.iloc[i].to_dict()) for i in top_idx]
+    return [BookEntity(id = df.iloc[i]["id"],work_key=df.iloc[i]["work_key"], title=df.iloc[i]["title"], author=df.iloc[i]["author"], genre=df.iloc[i]["genre"], description=df.iloc[i]["description"]) for i in top_idx]

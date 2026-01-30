@@ -1,5 +1,4 @@
-from scripts.database.database import Base, engine
-import scripts.models  #importing all models
+from src.database.database import Base, engine 
 
 Base.metadata.create_all(bind=engine)
 

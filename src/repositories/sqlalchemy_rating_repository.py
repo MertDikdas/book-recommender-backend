@@ -45,7 +45,7 @@ class SqlAlchemyRatingRepository(RatingRepository):
         self.db.refresh(orm)
         self.db.commit()
         return _rating_orm_to_entity(orm)
-
+    
     def get_for_user(self, user_id: int) -> list[RatingEntity]:
         orms = self.db.query(RatingORM).filter_by(user_id=user_id).all()
         return [_rating_orm_to_entity(orm) for orm in orms]
