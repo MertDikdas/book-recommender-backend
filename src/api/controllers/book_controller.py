@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import or_
 from typing import Optional, List
 
 from pydantic import BaseModel, ConfigDict
@@ -45,7 +46,7 @@ def list_books(service: BookService = Depends(get_book_service)):
     books = service.list_books()
     return books
 
-@router.get("/{book_name}", response_model=BookOut)
+@router.get("/by-title/{book_name}", response_model=BookOut)
 def get_book_by_name(book_name: str, 
                      service: BookService = Depends(get_book_service)):
     
@@ -67,3 +68,11 @@ def create_book(
         genre=book_in.genre,
     )
     return book
+
+@router.get("/search", response_model=List[BookOut])
+def search_books(
+    q: str = Query(..., min_length=2),
+    service: BookService = Depends(get_book_service),
+):
+    books = service.search_books(q)
+    return books

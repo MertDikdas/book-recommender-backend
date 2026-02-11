@@ -16,3 +16,6 @@ class BookRepository(ABC):
 
     @abstractmethod
     def get_by_title(self, title: str) -> Optional[BookEntity]: ...
+
+    @abstractmethod
+    def search_books(self, query: str) -> list[BookEntity]: ...

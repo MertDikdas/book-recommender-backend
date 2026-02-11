@@ -19,4 +19,7 @@ class BookService:
     
     def get_book_by_title(self, title: str) -> BookEntity:
         return self.book_repo.get_by_title(title)
+    
+    def search_books(self, query: str) -> list[BookEntity]:
+        return self.book_repo.search_books(query)
         
