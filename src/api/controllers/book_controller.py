@@ -8,6 +8,8 @@ from pydantic import BaseModel, ConfigDict
 from src.database.database import SessionLocal
 from src.services.book_service import BookService
 from src.repositories.sqlalchemy_book_repository import SqlAlchemyBookRepository
+from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
+from src.repositories.sqlalchemy_rating_repository import SqlAlchemyRatingRepository
 from src.domains.orm.book_orm import BookORM
 from src.mappers.entity_to_orm_mapper import user_entity_to_orm
 
@@ -36,6 +38,7 @@ def get_db():
     finally:
         db.close()
 
+# Dependency injection for BookService without UserRepository
 def get_book_service(db: Session = Depends(get_db)) -> BookService:
     repo = SqlAlchemyBookRepository(db)
     return BookService(repo)
@@ -76,3 +79,4 @@ def search_books(
 ):
     books = service.search_books(q)
     return books
+
