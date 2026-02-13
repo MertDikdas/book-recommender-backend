@@ -74,9 +74,11 @@ def create_book(
 
 @router.get("/search", response_model=List[BookOut])
 def search_books(
-    q: str = Query(..., min_length=2),
+    q: str = Query(...),
     service: BookService = Depends(get_book_service),
 ):
+    if not q.strip():
+        return []
     books = service.search_books(q)
     return books
 
