@@ -16,7 +16,7 @@ class RatingService:
         self.rating_repo = rating_repo
     # Create or update rating
     def rate_book(self, username: str, book_id: int, value: int) -> RatingEntity:
-        if value < 1 or value > 5:
+        if value < 0 or value > 5:
             raise ValueError("Rating must be between 1 and 5")
 
         # 1) find the user if not exist raise error
