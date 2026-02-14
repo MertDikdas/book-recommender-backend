@@ -7,7 +7,7 @@ class RatingORM(Base):
     __tablename__ = "ratings"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), ondelete="CASCADE")
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     book_id = Column(Integer, ForeignKey("books.id"), nullable=False)
     rating = Column(Integer, nullable=False)  # Assuming rating is an integer value
     created_at = Column(DateTime, default=datetime.utcnow)
