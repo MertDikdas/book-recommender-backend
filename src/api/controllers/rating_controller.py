@@ -72,3 +72,13 @@ def get_ratings_for_user(
 ):
     ratings = service.get_ratings_for_user(username)
     return ratings
+
+@router.delete("/{username}/books/{book_id}")
+def delete_user_book(
+    username: str,
+    book_id: int,
+    service: RatingService = Depends(get_rating_service),
+):
+    deleted = service.delete_user_book(username, book_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Book not found or not owned by user")

@@ -49,3 +49,9 @@ class SqlAlchemyRatingRepository(RatingRepository):
     def get_for_user(self, user_id: int) -> list[RatingEntity]:
         orms = self.db.query(RatingORM).filter_by(user_id=user_id).all()
         return [_rating_orm_to_entity(orm) for orm in orms]
+    
+    def delete(self, rating_id):
+        orm = self.db.query(RatingORM).filter_by(id=rating_id).first()
+        if orm:
+            self.db.delete(orm)
+            self.db.commit()

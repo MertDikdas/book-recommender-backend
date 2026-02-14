@@ -16,3 +16,6 @@ class RatingRepository(ABC):
 
     @abstractmethod
     def get_for_user(self, user_id: int) -> Iterable[RatingEntity]: ...
+
+    @abstractmethod
+    def delete(self, rating_id: int) -> None: ...

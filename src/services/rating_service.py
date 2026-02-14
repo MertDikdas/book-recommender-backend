@@ -64,3 +64,14 @@ class RatingService:
         # 2) get ratings
         ratings = self.rating_repo.get_for_user(user.id)
         return ratings
+    
+    def delete_user_book(self, username: str, book_id: int) -> bool:
+        user = self.user_repo.get_by_username(username)
+        if not user:
+            raise ValueError(f"User with username '{username}' not found")
+        user_id = user.id
+        rating = self.rating_repo.get_for_user_and_book(user_id, book_id)
+        if not rating:
+            return False  # No rating means the user doesn't have this book in their list
+        self.rating_repo.delete(rating.id)
+        return True

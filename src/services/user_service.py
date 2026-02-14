@@ -38,3 +38,4 @@ class UserService:
             book = self.book_repo.get_by_id(rating.book_id)
             if book:
                 yield book
+    
