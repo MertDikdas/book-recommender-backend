@@ -58,16 +58,15 @@ def create_user(
     return user
 
 #get user
-@router.get("", response_model=UserOut)
+@router.get("/{username}", response_model=UserOut)
 def get_user(
-    user_in: UserCreate,
+    username: str,
     service: UserService = Depends(get_user_service),
 ):
-    user = service.get_user(user_in.username)
+    user = service.get_user(username)
     if user is None:
         raise HTTPException(status_code=400, detail = "User doesn't exists!")
-    orm = user_entity_to_orm(user);
-    return orm
+    return user
 
 @router.get("/{username}/books", response_model=List[BookOut])
 def get_user_books(
