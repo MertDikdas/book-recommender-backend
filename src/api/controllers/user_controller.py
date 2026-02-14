@@ -80,13 +80,13 @@ def get_user_books(
         raise HTTPException(status_code=404, detail="User has no books")
     return books
 
-@router.delete("/{user_id}")
+@router.delete("/{username}", status_code=204)
 def delete_user(
-    user_id: int,
+    username: str,
     service: UserService = Depends(get_user_service),
 ):
     try:
-        service.delete_user(user_id)
+        service.delete_user(username)
         return {"detail": "User deleted successfully"}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))

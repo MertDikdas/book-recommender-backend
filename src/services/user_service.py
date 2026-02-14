@@ -39,8 +39,8 @@ class UserService:
             if book:
                 yield book
     
-    def delete_user(self, user_id: int) -> None:
-        user = self.user_repo.get_by_id(user_id)
+    def delete_user(self, username: str) -> None:
+        user = self.user_repo.get_by_username(username)
         if not user:
-            raise ValueError(f"User with id '{user_id}' not found")
-        self.user_repo.delete(user_id)
+            raise ValueError(f"User with username '{username}' not found")
+        self.user_repo.delete(username)

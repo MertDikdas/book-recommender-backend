@@ -26,9 +26,9 @@ class SqlAlchemyUserRepository(UserRepository):
         orm = self.db.query(UserORM).filter_by(id=user_id).first()
         return _user_orm_to_entity(orm) if orm else None
     
-    def delete(self, user_id: int) -> None:
-        orm = self.db.query(UserORM).filter_by(id=user_id).first()
-        
+    def delete(self, username: str) -> None:
+        orm = self.db.query(UserORM).filter_by(username=username).first()
+
         if orm:
             self.db.delete(orm)
             self.db.commit()
