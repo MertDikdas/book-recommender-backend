@@ -44,3 +44,18 @@ class UserService:
         if not user:
             raise ValueError(f"User with username '{username}' not found")
         self.user_repo.delete(username)
+
+    def get_user_genres(self, username: str) -> Iterable[str]:
+        user = self.user_repo.get_by_username(username)  # Ensure user exists, can raise exception if not found
+        if not user:
+            raise ValueError(f"User with username '{username}' not found")
+        user_id = user.id
+        ratings = self.rating_repo.get_for_user(user_id)
+        if ratings is None:
+            return []
+        genres = set()
+        for rating in ratings:
+            book = self.book_repo.get_by_id(rating.book_id)
+            if book and book.genre:
+                genres.update(genre.strip() for genre in book.genre.split(";"))
+        return genres

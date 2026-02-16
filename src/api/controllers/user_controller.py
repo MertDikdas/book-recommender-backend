@@ -89,3 +89,13 @@ def delete_user(
         return {"detail": "User deleted successfully"}
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    
+@router.get("/{username}/genres", response_model=List[str])
+def get_user_genres(
+    username: str,
+    service: UserService = Depends(get_user_service),
+):
+    genres = service.get_user_genres(username)
+    if not genres:
+        raise HTTPException(status_code=404, detail="User has no genres")
+    return genres

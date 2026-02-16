@@ -36,14 +36,13 @@ class RecommendationService:
         if not user:
             return None
         user_ratings = self.rating_repo.get_for_user(user.id)
+        genre_user_ratings = []
         user_books = {}
         for rating in user_ratings:
             book_id = rating.book_id
             book = self.book_repo.get_by_id(book_id)
             if book is None or book.genre.find(genre) == -1:
                 continue
+            genre_user_ratings.append(rating)
             user_books[rating.book_id] = book
-
-        
-        
-        return recommend_for_user(user_ratings, user_books, top_k=top_k)
+        return recommend_for_user(genre_user_ratings, user_books, top_k=top_k)
