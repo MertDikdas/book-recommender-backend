@@ -42,6 +42,8 @@ def recommend_for_user(user_ratings, user_books, top_k=20) -> list[BookEntity] |
     weights = []
     # Build user profile
     for row in user_ratings:
+        if row.book_id not in user_books:
+            continue
         rating = row.rating
         wk = user_books[row.book_id].work_key
         pos = work_key_to_pos.get(wk)
@@ -64,7 +66,7 @@ def recommend_for_user(user_ratings, user_books, top_k=20) -> list[BookEntity] |
         ]
     # Create user profile as weighted average of item vectors    
     item_matrix = np.vstack(item_vectors)
-    weights = np.array(weights)
+    weights = np.array(weights)  # Center ratings around 0 (assuming ratings are from 1 to 5)
     user_profile = np.average(item_matrix, axis=0, weights=weights)
     # Compute similarity scores
     similarity_scores = cosine_similarity(user_profile.reshape(1, -1), X_w).ravel()
