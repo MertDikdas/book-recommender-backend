@@ -29,3 +29,21 @@ class RecommendationService:
         
         
         return recommend_for_user(user_ratings, user_books, top_k=top_k)
+    
+    def get_recommendations_for_user_by_genre(self, user_name: str, genre: str, top_k: int = 20) -> list[BookEntity] | None:
+        # Fetch user ratings
+        user = self.user_repo.get_by_username(user_name)
+        if not user:
+            return None
+        user_ratings = self.rating_repo.get_for_user(user.id)
+        user_books = {}
+        for rating in user_ratings:
+            book_id = rating.book_id
+            book = self.book_repo.get_by_id(book_id)
+            if book is None or book.genre.find(genre) == -1:
+                continue
+            user_books[rating.book_id] = book
+
+        
+        
+        return recommend_for_user(user_ratings, user_books, top_k=top_k)
