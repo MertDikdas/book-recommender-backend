@@ -13,7 +13,7 @@ class RecommendationService:
         self.book_repo = book_repo
         self.rating_repo = rating_repo
 
-    def get_recommendations_for_user(self, user_name: str, top_k: int = 20) -> list[BookEntity] | None:
+    def get_recommendations_for_user(self, user_name: str, page_number:int, top_k: int = 20) -> list[BookEntity] | None:
         # Fetch user ratings
         user = self.user_repo.get_by_username(user_name)
         if not user:
@@ -28,9 +28,9 @@ class RecommendationService:
 
         
         
-        return recommend_for_user(user_ratings, user_books, top_k=top_k)
+        return recommend_for_user(user_ratings, user_books, min_k=(page_number-1)*top_k, max_k=page_number*top_k)
     
-    def get_recommendations_for_user_by_genre(self, user_name: str, genre: str, top_k: int = 20) -> list[BookEntity] | None:
+    def get_recommendations_for_user_by_genre(self, user_name: str, genre: str, page_number: int , top_k: int = 20) -> list[BookEntity] | None:
         # Fetch user ratings
         user = self.user_repo.get_by_username(user_name)
         if not user:
@@ -45,4 +45,4 @@ class RecommendationService:
                 continue
             genre_user_ratings.append(rating)
             user_books[rating.book_id] = book
-        return recommend_for_user(genre_user_ratings, user_books, top_k=top_k)
+        return recommend_for_user(genre_user_ratings, user_books, min_k=(page_number-1)*top_k, max_k=page_number*top_k)

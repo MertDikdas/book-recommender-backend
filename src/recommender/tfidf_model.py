@@ -34,10 +34,11 @@ work_key_to_pos = {
 
 
 # Recommendation function for a user based on their ratings
-def recommend_for_user(user_ratings, user_books, top_k=20) -> list[BookEntity] | None:
+# min_k and max_k are used for pagination of recommendations
+def recommend_for_user(user_ratings, user_books, min_k,max_k=20) -> list[BookEntity] | None:
     # If user has no ratings, return random books
     if len(user_ratings) == 0:
-        return [BookEntity(id = df.iloc[i]["id"], work_key=df.iloc[i]["work_key"], title=df.iloc[i]["title"], author=df.iloc[i]["author"], genre=df.iloc[i]["genre"], description=df.iloc[i]["description"]) for i in df.sample(top_k).index]
+        return [BookEntity(id = df.iloc[i]["id"], work_key=df.iloc[i]["work_key"], title=df.iloc[i]["title"], author=df.iloc[i]["author"], genre=df.iloc[i]["genre"], description=df.iloc[i]["description"]) for i in df.sample(max_k).index]
     item_vectors = []
     weights = []
     # Build user profile
@@ -62,7 +63,7 @@ def recommend_for_user(user_ratings, user_books, top_k=20) -> list[BookEntity] |
                 genre=df.iloc[i]["genre"],
                 description=df.iloc[i]["description"],
             )
-            for i in df.sample(top_k).index
+            for i in df.sample(max_k).index
         ]
     # Create user profile as weighted average of item vectors    
     item_matrix = np.vstack(item_vectors)
@@ -85,5 +86,5 @@ def recommend_for_user(user_ratings, user_books, top_k=20) -> list[BookEntity] |
     # Sort by score and get top-k 
     top_idx = sorted(idx_scores, key=lambda x: x[1], reverse=True)
     # Get only indices
-    top_idx = [i for i, s in top_idx[:top_k]]
+    top_idx = [i for i, s in top_idx[min_k:max_k]]
     return [BookEntity(id = df.iloc[i]["id"],work_key=df.iloc[i]["work_key"], title=df.iloc[i]["title"], author=df.iloc[i]["author"], genre=df.iloc[i]["genre"], description=df.iloc[i]["description"]) for i in top_idx]
