@@ -13,6 +13,7 @@ class JsonToBookMapper:
                 "authors": "; ".join([author.get("name") for author in item.get("authors", []) if author.get("name")]),
                 "genre": self.json_data.get("name"),
                 "subjects": "; ".join(item.get("subject", [])),
+                "img_cover_url" : item.get("cover_id")
             }
             mapped_books.append(book)
         return mapped_books

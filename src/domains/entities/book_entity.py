@@ -9,3 +9,4 @@ class BookEntity:
     author: Optional[str] = None
     genre: Optional[str] = None
     description: Optional[str] = None
+    img_cover_url: Optional[str] = None

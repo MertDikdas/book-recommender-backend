@@ -12,6 +12,7 @@ class BookORM(Base):
     author = Column(String(255), nullable=False, index=True)
     genre = Column(String(255), nullable=True, index=True)   
     description = Column(Text)   
+    img_cover_url = Column(String(255), nullable=True)
 
     ratings = relationship("RatingORM", back_populates="book")
 
