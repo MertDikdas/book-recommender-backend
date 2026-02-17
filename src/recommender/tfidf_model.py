@@ -38,7 +38,13 @@ work_key_to_pos = {
 def recommend_for_user(user_ratings, user_books, min_k,max_k=20) -> list[BookEntity] | None:
     # If user has no ratings, return random books
     if len(user_ratings) == 0:
-        return [BookEntity(id = df.iloc[i]["id"], work_key=df.iloc[i]["work_key"], title=df.iloc[i]["title"], author=df.iloc[i]["author"], genre=df.iloc[i]["genre"], description=df.iloc[i]["description"]) for i in df.sample(max_k).index]
+        return [BookEntity(id = df.iloc[i]["id"], 
+                           work_key=df.iloc[i]["work_key"], 
+                           title=df.iloc[i]["title"], 
+                           author=df.iloc[i]["author"], 
+                           genre=df.iloc[i]["genre"], 
+                           description=df.iloc[i]["description"], 
+                           img_cover_url=df.iloc[i]["img_cover_url"]) for i in df.sample(max_k).index]
     item_vectors = []
     weights = []
     # Build user profile
@@ -62,6 +68,7 @@ def recommend_for_user(user_ratings, user_books, min_k,max_k=20) -> list[BookEnt
                 author=df.iloc[i]["author"],
                 genre=df.iloc[i]["genre"],
                 description=df.iloc[i]["description"],
+                img_cover_url=df.iloc[i]["img_cover_url"]
             )
             for i in df.sample(max_k).index
         ]
@@ -87,4 +94,10 @@ def recommend_for_user(user_ratings, user_books, min_k,max_k=20) -> list[BookEnt
     top_idx = sorted(idx_scores, key=lambda x: x[1], reverse=True)
     # Get only indices
     top_idx = [i for i, s in top_idx[min_k:max_k]]
-    return [BookEntity(id = df.iloc[i]["id"],work_key=df.iloc[i]["work_key"], title=df.iloc[i]["title"], author=df.iloc[i]["author"], genre=df.iloc[i]["genre"], description=df.iloc[i]["description"]) for i in top_idx]
+    return [BookEntity(id = df.iloc[i]["id"],
+                       work_key=df.iloc[i]["work_key"], 
+                       title=df.iloc[i]["title"], 
+                       author=df.iloc[i]["author"], 
+                       genre=df.iloc[i]["genre"], 
+                       description=df.iloc[i]["description"],
+                       img_cover_url=df.iloc[i]["img_cover_url"]) for i in top_idx]

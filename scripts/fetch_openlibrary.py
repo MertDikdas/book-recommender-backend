@@ -5,10 +5,10 @@ import pandas as pd
 from pathlib import Path
 
 # Define constants
-SUBJECTS = ["fantasy", "science_fiction", "romance", "history","literature","mystery_and_detective_stories", "juvenile_literature",
-             "autobiography","programming","psychology","poetry","short_stories","young_adult_fiction", "biology", "chemistry","mathematics",
-             "business__economics", "finance", "ancient_civilization","archaeology","cooking"]
-LIMIT_PER_SUBJECT = 5000
+SUBJECTS = ["fantasy"] #, "science_fiction", "romance", "history","literature","mystery_and_detective_stories", "juvenile_literature",
+             #"autobiography","programming","psychology","poetry","short_stories","young_adult_fiction", "biology", "chemistry","mathematics",
+             #"business__economics", "finance", "ancient_civilization","archaeology","cooking"]
+LIMIT_PER_SUBJECT = 2000
 PER_REQUEST_LIMIT = 1000
 BASE_URL = "https://openlibrary.org"
 RAW_DIR = Path("data/raw")

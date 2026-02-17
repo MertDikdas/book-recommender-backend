@@ -13,6 +13,7 @@ def _book_orm_to_entity(orm: BookORM) -> BookEntity:
         author=orm.author,
         genre=orm.genre,
         description=orm.description,
+        img_cover_url=orm.img_cover_url
     )
 
 

@@ -10,8 +10,8 @@ class BookService:
         return self.book_repo.get_by_id(book_id)
     
     # Adding a new book service
-    def create_book(self, title: str, author: str, description: str, genre: str) -> BookEntity:
-        book = BookEntity(id=None, title=title, author=author, description=description, genre=genre)
+    def create_book(self, title: str, author: str, description: str, genre: str, img_cover_url: str) -> BookEntity:
+        book = BookEntity(id=None, title=title, author=author, description=description, genre=genre, img_cover_url=img_cover_url)
         book = self.book_repo.add(book)
         return book
     

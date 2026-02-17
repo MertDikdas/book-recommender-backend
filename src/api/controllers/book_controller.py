@@ -21,6 +21,7 @@ class BookCreate(BaseModel):
     author: Optional[str] = None
     genre: Optional[str] = None
     description: Optional[str] = None
+    img_cover_url : Optional[str] = None
 
 
 class BookOut(BaseModel):
@@ -28,6 +29,7 @@ class BookOut(BaseModel):
     title: str
     author: Optional[str]
     genre: Optional[str]
+    img_cover_url: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
 

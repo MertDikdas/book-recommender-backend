@@ -15,7 +15,8 @@ def book_entity_to_orm(entity: BookEntity) -> BookORM:
         work_key = entity.work_key,
         author = entity.author,
         description = entity.description,
-        genre = entity.genre
+        genre = entity.genre,
+        img_cover_url = entity.img_cover_url
     )
     return orm
 

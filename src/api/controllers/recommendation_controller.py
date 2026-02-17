@@ -16,10 +16,14 @@ router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 
 class BookOut(BaseModel):
     id: int
+    work_key: str
     title: str
-    author: Optional[str] 
-    genre: Optional[str] 
-    description: Optional[str]
+    author: str
+    genre: Optional[str] = None
+    description: Optional[str] = None
+    img_cover_url: Optional[str] = None
+
+
     model_config = ConfigDict(from_attributes=True)
 
 def get_db():
