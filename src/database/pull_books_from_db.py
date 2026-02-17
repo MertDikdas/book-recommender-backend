@@ -13,6 +13,7 @@ def pull_books_from_db(db: Session) -> pd.DataFrame:
             "author": book.author,
             "genre": book.genre,
             "description": book.description,
+            "img_cover_url": book.img_cover_url
         })
     df = pd.DataFrame(data)
     return df

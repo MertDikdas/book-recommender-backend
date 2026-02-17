@@ -1,4 +1,4 @@
-import requests
+
 from scripts.fetch_openlibrary import fetch_subject, SUBJECTS, LIMIT_PER_SUBJECT, PER_REQUEST_LIMIT
 from src.mappers.json_to_book import JsonToBookMapper
 from src.database.database import SessionLocal
@@ -15,7 +15,8 @@ def save_books_to_db(data):
             title=book_info["title"],
             author=book_info["authors"],
             genre=book_info["genre"],
-            description=book_info["subjects"]
+            description=book_info["subjects"],
+            img_cover_url=book_info["img_cover_url"]
         )
         existing = db.query(BookORM).filter_by(work_key=book_info["work_key"]).first()
         if existing:
