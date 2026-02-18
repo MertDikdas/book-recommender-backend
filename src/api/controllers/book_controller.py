@@ -41,10 +41,11 @@ class BookOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class CommentOut(BaseModel):
-    book_id: int
+    id: int
     user_id: int
-    comment_text:str
-    
+    username: Optional[str] = None
+    book_id: int
+    comment_text: str
     model_config = ConfigDict(from_attributes=True)
 
 def get_db():

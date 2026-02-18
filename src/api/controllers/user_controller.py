@@ -49,6 +49,18 @@ def get_user_service(db: Session = Depends(get_db)) -> UserService:
     rating_repo = SqlAlchemyRatingRepository(db)  # Assuming you have a function to create a RatingRepository
     return UserService(book_repo=book_repo, user_repo=user_repo, rating_repo=rating_repo)
 
+
+@router.get("/by-id", response_model=UserOut)
+def get_user_books(
+    user_id: int,
+    service: UserService = Depends(get_user_service),
+):
+    user = service.get_user_by_id(user_id)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 #creates user
 @router.post("", response_model=UserOut)
 def create_user(
@@ -103,13 +115,3 @@ def get_user_genres(
         raise HTTPException(status_code=404, detail="User has no genres")
     return genres
 
-@router.get("/by-id", response_model=List[UserOut])
-def get_user_books(
-    user_id: str,
-    service: UserService = Depends(get_user_service),
-):
-    user = service.get_user_by_id(user_id)
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
