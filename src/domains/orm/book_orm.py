@@ -14,10 +14,10 @@ class BookORM(Base):
     description = Column(Text)   
     img_cover_url = Column(String(255), nullable=True)
 
-    ratings = relationship("RatingORM", back_populates="book", cascade="all, delete-orphan", lazy="selectin")
-    comments = relationship("CommentORM", back_populates="book", cascade="all, delete-orphan", lazy="selectin")
+    ratings = relationship("RatingORM", back_populates="book", cascade="all, delete-orphan")#, lazy="selectin")
+    comments = relationship("CommentORM", back_populates="book", cascade="all, delete-orphan")#, lazy="selectin")
 
     def __repr__(self):
         return f"<Book(id={self.id}, title='{self.title}')>"
-
     
+

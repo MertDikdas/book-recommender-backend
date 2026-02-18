@@ -1,9 +1,9 @@
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
-from src.domains.entities.book_entity import BookEntity
+from src.domains.entities import BookEntity, CommentEntity
 from src.repositories.book_repository import BookRepository
-from src.domains.orm.book_orm import BookORM
+from src.domains.orm import BookORM, CommentORM
 from src.mappers.orm_to_entity_mapper import _book_orm_to_entity
 
 class SqlAlchemyBookRepository(BookRepository):
@@ -58,3 +58,15 @@ class SqlAlchemyBookRepository(BookRepository):
         )
 
         return [_book_orm_to_entity(orm) for orm in books_orm]
+
+    def add_comment(self, book_id: int, user_id: int, comment_text: str) -> CommentEntity:
+        comment = CommentORM(book_id=book_id, user_id=user_id, comment_text=comment_text)
+        self.db.add(comment)
+        self.db.commit()
+        self.db.refresh(comment)
+        return CommentEntity(
+            id=comment.id,
+            book_id=comment.book_id,
+            user_id=comment.user_id,
+            comment_text=comment.comment_text,
+        )

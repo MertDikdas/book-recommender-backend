@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Iterable
 
-from ..domains.entities.book_entity import BookEntity
+from ..domains.entities import BookEntity, CommentEntity
 
 
 class BookRepository(ABC):
@@ -19,3 +19,6 @@ class BookRepository(ABC):
 
     @abstractmethod
     def search_books(self, query: str) -> list[BookEntity]: ...
+
+    @abstractmethod
+    def add_comment(self, book: BookEntity, query: str) -> BookEntity: ...

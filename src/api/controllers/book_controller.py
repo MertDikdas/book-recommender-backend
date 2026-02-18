@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 from typing import Optional, List
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.database.database import SessionLocal
 from src.services.book_service import BookService
@@ -24,6 +24,10 @@ class BookCreate(BaseModel):
     description: Optional[str] = None
     img_cover_url : Optional[str] = None
 
+class CommentCreate(BaseModel):
+    book_id:int
+    username:str
+    comment_text:str = Field(min_length=1, max_length=2000)
 
 class BookOut(BaseModel):
     id: int
@@ -36,6 +40,13 @@ class BookOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class CommentOut(BaseModel):
+    book_id: int
+    user_id: int
+    comment_text:str
+    
+    model_config = ConfigDict(from_attributes=True)
+
 def get_db():
     db = SessionLocal()
     try:
@@ -45,8 +56,9 @@ def get_db():
 
 # Dependency injection for BookService without UserRepository
 def get_book_service(db: Session = Depends(get_db)) -> BookService:
-    repo = SqlAlchemyBookRepository(db)
-    return BookService(repo)
+    book_repo = SqlAlchemyBookRepository(db)
+    user_repo = SqlAlchemyUserRepository(db)
+    return BookService(book_repo=book_repo, user_repo=user_repo)
 
 
 @router.get("/all", response_model=List[BookOut])
@@ -87,3 +99,10 @@ def search_books(
     books = service.search_books(q)
     return books
 
+@router.post("/comments", response_model=CommentOut)
+def create_comment(
+    comment_in: CommentCreate,               
+    service: BookService = Depends(get_book_service)
+):
+    comment = service.create_comment(comment_in.book_id, comment_in.username, comment_in.comment_text)
+    return comment

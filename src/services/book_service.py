@@ -1,9 +1,10 @@
-from src.repositories.book_repository import BookRepository
-from src.domains.entities.book_entity import BookEntity
+from src.repositories import BookRepository, UserRepository
+from src.domains.entities import BookEntity, UserEntity, CommentEntity
 
 class BookService:
-    def __init__(self, book_repo: BookRepository):
+    def __init__(self, book_repo: BookRepository, user_repo: UserRepository):
         self.book_repo = book_repo
+        self.user_repo = user_repo
 
     # Getting book by id service
     def get_book(self, book_id: int) -> BookEntity:
@@ -31,3 +32,15 @@ class BookService:
             return []
         return self.book_repo.search_books(query)
     
+    def create_comment(self, book_id:int , username:str, comment_text:str) -> BookEntity:
+        book = self.book_repo.get_by_id(book_id)
+        if not book:
+            return None
+        user = self.user_repo.get_by_username(username)
+        if not user:
+            return None
+        comment = self.book_repo.add_comment(book.id,user.id,comment_text)
+        return comment
+
+
+        
