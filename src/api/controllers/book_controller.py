@@ -42,7 +42,7 @@ class BookOut(BaseModel):
 
 class CommentOut(BaseModel):
     book_id: int
-    user_id: int
+    username: str
     comment_text:str
     
     model_config = ConfigDict(from_attributes=True)
@@ -106,3 +106,11 @@ def create_comment(
 ):
     comment = service.create_comment(comment_in.book_id, comment_in.username, comment_in.comment_text)
     return comment
+
+@router.post("/comments", response_model=CommentOut)
+def get_comments(
+    book_id: int,
+    service: BookService = Depends(get_book_service)
+):
+    comments = service.get_comments_by_book_id(book_id)
+    return comments

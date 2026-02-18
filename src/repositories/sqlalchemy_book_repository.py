@@ -4,7 +4,7 @@ from sqlalchemy import or_
 from src.domains.entities import BookEntity, CommentEntity
 from src.repositories.book_repository import BookRepository
 from src.domains.orm import BookORM, CommentORM
-from src.mappers.orm_to_entity_mapper import _book_orm_to_entity
+from src.mappers.orm_to_entity_mapper import _book_orm_to_entity, _comment_orm_to_entity
 
 class SqlAlchemyBookRepository(BookRepository):
     def __init__(self, db: Session):
@@ -70,3 +70,7 @@ class SqlAlchemyBookRepository(BookRepository):
             user_id=comment.user_id,
             comment_text=comment.comment_text,
         )
+    
+    def get_comments_by_book_id(self, book_id:int) -> list[CommentEntity]:
+        comments = self.db.query(CommentORM).filter_by(book_id=book_id).all()
+        return [_comment_orm_to_entity(orm) for orm in comments]

@@ -22,3 +22,6 @@ class BookRepository(ABC):
 
     @abstractmethod
     def add_comment(self, book: BookEntity, query: str) -> BookEntity: ...
+
+    @abstractmethod
+    def get_comments_by_book_id(self, book_id:int) -> list[CommentEntity]: ...

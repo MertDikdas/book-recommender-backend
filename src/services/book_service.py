@@ -41,6 +41,9 @@ class BookService:
             return None
         comment = self.book_repo.add_comment(book.id,user.id,comment_text)
         return comment
-
-
-        
+    
+    def get_comments_by_book_id(self, book_id:int) -> list[CommentEntity]:
+        book = self.book_repo.get_by_id(book_id)
+        if not book:
+            return None
+        comments = self.book_repo.get_comments_by_book_id(book_id)
