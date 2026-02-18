@@ -8,7 +8,8 @@ class UserORM(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), unique=True, nullable=False)
 
-    ratings = relationship("RatingORM", back_populates="user", cascade="all, delete-orphan")
+    ratings = relationship("RatingORM", back_populates="user", cascade="all, delete-orphan", lazy="selectin")
+    comments = relationship("CommentORM", back_populates="user", cascade="all, delete-orphan", lazy="selectin")
 
     def __repr__(self):
         return f"<User(id={self.id}, username='{self.username}')>"
