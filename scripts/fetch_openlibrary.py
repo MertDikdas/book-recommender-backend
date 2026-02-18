@@ -1,65 +1,42 @@
+import time
 import requests
-import csv
-import numpy as np
-import pandas as pd
-from pathlib import Path
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Define constants
-SUBJECTS = ["fantasy"] #, "science_fiction", "romance", "history","literature","mystery_and_detective_stories", "juvenile_literature",
-             #"autobiography","programming","psychology","poetry","short_stories","young_adult_fiction", "biology", "chemistry","mathematics",
-             #"business__economics", "finance", "ancient_civilization","archaeology","cooking"]
-LIMIT_PER_SUBJECT = 2000
+SUBJECTS = ["fantasy", "science_fiction", "romance", "history","literature","mystery_and_detective_stories", "juvenile_literature",
+             "autobiography","programming","psychology","poetry","short_stories","young_adult_fiction", "biology", "chemistry","mathematics",
+             "business__economics", "finance", "ancient_civilization","archaeology","cooking"]
+LIMIT_PER_SUBJECT = 15000
 PER_REQUEST_LIMIT = 1000
 BASE_URL = "https://openlibrary.org"
-RAW_DIR = Path("data/raw")
-RAW_DIR.mkdir(parents=True, exist_ok=True)
-csv_path = RAW_DIR / "books_raw.csv"
+BASE_TURKISH = "https://openlibrary.org/search.json"
 
-fieldnames = ["work_key", "title", "first_publish_year", "authors", "source_subject","subjects"]
+session = requests.Session()
+retries = Retry(
+    total=8,
+    backoff_factor=1.5,
+    status_forcelist=[429, 500, 502, 503, 504],
+    allowed_methods=["GET"],
+)
+session.mount("https://", HTTPAdapter(max_retries=retries))
 
 #fetch data from OpenLibrary API for a given subject
 
 def fetch_subject(subject: str, limit: int = PER_REQUEST_LIMIT, offset: int = 0) -> dict:
-    params = {
-        "limit": min(limit, PER_REQUEST_LIMIT),  # tek istekte max 1000
-        "offset": offset,
-    }
-    r = requests.get(f"{BASE_URL}/subjects/{subject}.json", params=params, timeout=15)
+    params = {"limit": min(limit, PER_REQUEST_LIMIT), "offset": offset}
+    headers = {"User-Agent": "BookRecommenderSeeder/1.0 (contact: you@example.com)"}
+    r = session.get(f"{BASE_URL}/subjects/{subject}.json", params=params, headers=headers, timeout=30)
+    r.raise_for_status()
+    print(f"{subject} offset={offset} OK")
+    return r.json()
+
+
+
+
+def fetch_tr_books(query="language:tur", page=1, limit=100):
+    params = {"q": query, "page": page, "limit": limit}
+    headers = {"User-Agent": "BookSeeder/1.0"}
+    r = requests.get(BASE_TURKISH, params=params, headers=headers, timeout=30)
     r.raise_for_status()
     return r.json()
-"""
-with csv_path.open("w", newline="", encoding="utf-8") as f:
-    writer = csv.DictWriter(f, fieldnames=fieldnames)
-    writer.writeheader()
-
-    for subject in SUBJECTS:
-        print(f"Fetching subject: {subject}")
-        data = fetch_subject(subject)
-        works = data.get("works", [])
-
-        for w in works:
-            title = w.get("title")
-            year = w.get("first_publish_year")
-
-            authors = []
-            for a in w.get("authors", []):
-                name = a.get("name")
-                if name:
-                    authors.append(name)
-            subjects = []
-            for s in w.get("subject", []):
-                subjects.append(s)
-            
-
-            row = {
-                "work_key": w.get("key"),
-                "title": title,
-                "first_publish_year": year,
-                "authors": "; ".join(authors),
-                "subjects": "; ".join(subjects),
-                "source_subject": subject,
-            }
-            writer.writerow(row)
-print(f"Saved raw books to {csv_path}")
-"""
-

@@ -18,6 +18,7 @@ router = APIRouter(prefix="/books", tags=["books"])
 
 class BookCreate(BaseModel):
     title: str
+    work_key: str
     author: Optional[str] = None
     genre: Optional[str] = None
     description: Optional[str] = None
@@ -26,9 +27,11 @@ class BookCreate(BaseModel):
 
 class BookOut(BaseModel):
     id: int
+    work_key: str
     title: str
-    author: Optional[str]
-    genre: Optional[str]
+    author: str
+    genre: Optional[str] = None
+    description: Optional[str] = None
     img_cover_url: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)
