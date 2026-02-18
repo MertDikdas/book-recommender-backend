@@ -59,3 +59,7 @@ class UserService:
             if book and book.genre:
                 genres.update(genre.strip() for genre in book.genre.split(";"))
         return genres
+    
+    def get_user_by_id(self, user_id:str) -> Optional[UserEntity]:
+        user = self.user_repo.get_by_id(user_id)
+        return user

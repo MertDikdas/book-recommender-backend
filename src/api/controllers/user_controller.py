@@ -102,3 +102,14 @@ def get_user_genres(
     if not genres:
         raise HTTPException(status_code=404, detail="User has no genres")
     return genres
+
+@router.get("/by-id", response_model=List[UserOut])
+def get_user_books(
+    user_id: str,
+    service: UserService = Depends(get_user_service),
+):
+    user = service.get_user_by_id(user_id)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user

@@ -26,7 +26,7 @@ class BookCreate(BaseModel):
 
 class CommentCreate(BaseModel):
     book_id:int
-    username:str
+    user_id: int
     comment_text:str = Field(min_length=1, max_length=2000)
 
 class BookOut(BaseModel):
@@ -42,7 +42,7 @@ class BookOut(BaseModel):
 
 class CommentOut(BaseModel):
     book_id: int
-    username: str
+    user_id: int
     comment_text:str
     
     model_config = ConfigDict(from_attributes=True)
@@ -104,13 +104,15 @@ def create_comment(
     comment_in: CommentCreate,               
     service: BookService = Depends(get_book_service)
 ):
-    comment = service.create_comment(comment_in.book_id, comment_in.username, comment_in.comment_text)
+    comment = service.create_comment(comment_in.book_id, comment_in.user_id, comment_in.comment_text)
     return comment
 
-@router.post("/comments", response_model=CommentOut)
+@router.get("/comments", response_model=list[CommentOut])
 def get_comments(
     book_id: int,
     service: BookService = Depends(get_book_service)
 ):
     comments = service.get_comments_by_book_id(book_id)
+    if comments is None:
+        return []
     return comments

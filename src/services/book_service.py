@@ -32,11 +32,11 @@ class BookService:
             return []
         return self.book_repo.search_books(query)
     
-    def create_comment(self, book_id:int , username:str, comment_text:str) -> BookEntity:
+    def create_comment(self, book_id:int , user_id:str, comment_text:str) -> BookEntity:
         book = self.book_repo.get_by_id(book_id)
         if not book:
             return None
-        user = self.user_repo.get_by_username(username)
+        user = self.user_repo.get_by_id(user_id)
         if not user:
             return None
         comment = self.book_repo.add_comment(book.id,user.id,comment_text)
@@ -47,3 +47,4 @@ class BookService:
         if not book:
             return None
         comments = self.book_repo.get_comments_by_book_id(book_id)
+        return comments
