@@ -1,53 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from typing import List, Optional
-from pydantic import BaseModel, ConfigDict
+from typing import List
 
-from src.database.database import SessionLocal
 from src.services.user_service import UserService
-from src.services.book_service import BookService
-from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
-from src.repositories.sqlalchemy_book_repository import SqlAlchemyBookRepository
-from src.repositories.sqlalchemy_rating_repository import SqlAlchemyRatingRepository
-from src.mappers.entity_to_orm_mapper import user_entity_to_orm
-
+from src.api.controllers.pydantic_models import UserCreate, UserOut, BookOut
+from src.uow.SqlAlchemyUOW import SqlAlchemyUnitOfWork
 #Router for user
 router = APIRouter(prefix="/users", tags=["users"])
 
-#pydantic class for json body
-class UserCreate(BaseModel):
-    username: str
-
-
-class UserOut(BaseModel):
-    id: int
-    username: str
-    model_config = ConfigDict(from_attributes=True)
-
-class BookOut(BaseModel):
-    id: int
-    work_key: str
-    title: str
-    author: str
-    genre: Optional[str] = None
-    description: Optional[str] = None
-    img_cover_url: Optional[str] = None
-
-    model_config = ConfigDict(from_attributes=True)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 #for accessing service with db
-def get_user_service(db: Session = Depends(get_db)) -> UserService:
-    book_repo = SqlAlchemyBookRepository(db)
-    user_repo = SqlAlchemyUserRepository(db)  # Assuming you have a function to create a UserRepository
-    rating_repo = SqlAlchemyRatingRepository(db)  # Assuming you have a function to create a RatingRepository
-    return UserService(book_repo=book_repo, user_repo=user_repo, rating_repo=rating_repo)
+def get_user_service() -> UserService:
+    uow = SqlAlchemyUnitOfWork()
+    return UserService(uow)
 
 
 @router.get("/by-id", response_model=UserOut)

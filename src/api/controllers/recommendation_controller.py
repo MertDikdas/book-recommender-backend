@@ -1,44 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from typing import List, Optional
-from pydantic import BaseModel, ConfigDict
-from src.database.database import SessionLocal
+
+from typing import List
+from src.api.controllers.pydantic_models import BookOut
 from src.services.recommendation_service import RecommendationService
-from src.repositories.sqlalchemy_rating_repository import SqlAlchemyRatingRepository
-from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
-from src.repositories.sqlalchemy_book_repository import SqlAlchemyBookRepository
-
-
+from src.uow.SqlAlchemyUOW import SqlAlchemyUnitOfWork
 # Router for recommendations
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 
-# pydantic class for json body
 
-class BookOut(BaseModel):
-    id: int
-    work_key: str
-    title: str
-    author: str
-    genre: Optional[str] = None
-    description: Optional[str] = None
-    img_cover_url: Optional[str] = None
-
-    model_config = ConfigDict(from_attributes=True)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-def get_recommendation_service(
-    db: Session = Depends(get_db),
-) -> RecommendationService:
-    user_repo = SqlAlchemyUserRepository(db)
-    book_repo = SqlAlchemyBookRepository(db)
-    rating_repo = SqlAlchemyRatingRepository(db)
-    return RecommendationService(user_repo, book_repo, rating_repo)
+def get_recommendation_service() -> RecommendationService:
+    uow = SqlAlchemyUnitOfWork()
+    return RecommendationService(uow)
 
 # for accessing service with db
 @router.get("/{user_name}", response_model=List[BookOut])

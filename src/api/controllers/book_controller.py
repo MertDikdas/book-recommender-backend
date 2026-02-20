@@ -1,70 +1,23 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy.orm import Session
-from sqlalchemy import or_
-from typing import Optional, List
+from typing import List
 
-from pydantic import BaseModel, ConfigDict, Field
-
-from src.database.database import SessionLocal
+from src.api.controllers.pydantic_models import BookCreate, CommentCreate, BookOut, CommentOut
 from src.services.book_service import BookService
-from src.repositories.sqlalchemy_book_repository import SqlAlchemyBookRepository
-from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
-from src.repositories.sqlalchemy_rating_repository import SqlAlchemyRatingRepository
-from src.domains.orm.book_orm import BookORM
-from src.mappers.entity_to_orm_mapper import user_entity_to_orm
+from src.uow.SqlAlchemyUOW import SqlAlchemyUnitOfWork
 
 
 router = APIRouter(prefix="/books", tags=["books"])
 
-class BookCreate(BaseModel):
-    title: str
-    work_key: str
-    author: Optional[str] = None
-    genre: Optional[str] = None
-    description: Optional[str] = None
-    img_cover_url : Optional[str] = None
-
-class CommentCreate(BaseModel):
-    book_id:int
-    username: str
-    comment_text:str = Field(min_length=1, max_length=2000)
-
-class BookOut(BaseModel):
-    id: int
-    work_key: str
-    title: str
-    author: str
-    genre: Optional[str] = None
-    description: Optional[str] = None
-    img_cover_url: Optional[str] = None
-
-    model_config = ConfigDict(from_attributes=True)
-
-class CommentOut(BaseModel):
-    id: int
-    user_id: int
-    username: Optional[str] = None
-    book_id: int
-    comment_text: str
-    model_config = ConfigDict(from_attributes=True)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Dependency injection for BookService without UserRepository
-def get_book_service(db: Session = Depends(get_db)) -> BookService:
-    book_repo = SqlAlchemyBookRepository(db)
-    user_repo = SqlAlchemyUserRepository(db)
-    return BookService(book_repo=book_repo, user_repo=user_repo)
+def get_book_service() -> BookService:
+    uow = SqlAlchemyUnitOfWork()
+    return BookService(uow)
 
 
 @router.get("/all", response_model=List[BookOut])
-def list_books(service: BookService = Depends(get_book_service)):
-    books = service.list_books()
+def list_all_books(service: BookService = Depends(get_book_service)):
+    books = service.list_all_books()
     return books
 
 @router.get("/by-title/{book_name}", response_model=BookOut)

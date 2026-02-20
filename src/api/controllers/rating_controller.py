@@ -1,41 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-from typing import Optional, List
+from typing import List
 
-from pydantic import BaseModel, ConfigDict
-from src.database.database import SessionLocal
+from src.api.controllers.pydantic_models import RatingCreate, RatingOut
 from src.services.rating_service import RatingService
-from src.repositories.sqlalchemy_rating_repository import SqlAlchemyRatingRepository
-from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
-from src.repositories.sqlalchemy_book_repository import SqlAlchemyBookRepository
-
+from src.uow.SqlAlchemyUOW import SqlAlchemyUnitOfWork
 router = APIRouter(prefix="/ratings", tags=["ratings"])
 
-class RatingCreate(BaseModel):
-    username: str
-    book_id: int
-    rating: int
 
-class RatingOut(BaseModel):
-    id: int
-    user_id: int
-    book_id: int
-    rating: int
-
-    model_config = ConfigDict(from_attributes=True)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-def get_rating_service(db: Session = Depends(get_db)) -> RatingService:
-    rating_repo = SqlAlchemyRatingRepository(db)
-    user_repo = SqlAlchemyUserRepository(db)
-    book_repo = SqlAlchemyBookRepository(db)
-    return RatingService(user_repo, book_repo, rating_repo)
+def get_rating_service() -> RatingService:
+    uow = SqlAlchemyUnitOfWork()
+    return RatingService(uow)
 
 #Create rating
 @router.post("", response_model=RatingOut)
