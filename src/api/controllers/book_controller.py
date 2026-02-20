@@ -12,6 +12,7 @@ from src.repositories.sqlalchemy_user_repository import SqlAlchemyUserRepository
 from src.repositories.sqlalchemy_rating_repository import SqlAlchemyRatingRepository
 from src.domains.orm.book_orm import BookORM
 from src.mappers.entity_to_orm_mapper import user_entity_to_orm
+from sqlalchemy import text
 
 
 router = APIRouter(prefix="/books", tags=["books"])
@@ -26,7 +27,7 @@ class BookCreate(BaseModel):
 
 class CommentCreate(BaseModel):
     book_id:int
-    user_id: int
+    username: str
     comment_text:str = Field(min_length=1, max_length=2000)
 
 class BookOut(BaseModel):
@@ -51,6 +52,9 @@ class CommentOut(BaseModel):
 def get_db():
     db = SessionLocal()
     try:
+        db.execute(text("PRAGMA journal_mode=WAL;"))
+        db.execute(text("PRAGMA synchronous=NORMAL;"))
+        db.execute(text("PRAGMA busy_timeout=30000;"))
         yield db
     finally:
         db.close()
@@ -105,7 +109,7 @@ def create_comment(
     comment_in: CommentCreate,               
     service: BookService = Depends(get_book_service)
 ):
-    comment = service.create_comment(comment_in.book_id, comment_in.user_id, comment_in.comment_text)
+    comment = service.create_comment(comment_in.book_id, comment_in.username, comment_in.comment_text)
     return comment
 
 @router.get("/comments", response_model=list[CommentOut])

@@ -1,6 +1,7 @@
 
 from typing import Optional
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import OperationalError
 from src.domains.entities.user_entity import UserEntity
 from src.repositories.user_repository import UserRepository
 from src.domains.orm.user_orm import UserORM
@@ -27,8 +28,11 @@ class SqlAlchemyUserRepository(UserRepository):
         return _user_orm_to_entity(orm) if orm else None
     
     def delete(self, username: str) -> None:
-        orm = self.db.query(UserORM).filter_by(username=username).first()
-
-        if orm:
-            self.db.delete(orm)
+        try:
+            user = self.db.query(UserORM).filter(UserORM.username == username).first()
+            if user:
+                self.db.delete(user)
             self.db.commit()
+        except OperationalError:
+            self.db.rollback()
+            raise
