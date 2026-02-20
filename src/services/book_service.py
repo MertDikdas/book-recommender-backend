@@ -48,3 +48,10 @@ class BookService:
             return None
         comments = self.book_repo.get_comments_by_book_id(book_id)
         return comments
+    
+    def delete_comment_by_id(self, comment_id:int):
+        try:
+            self.book_repo.delete_comment_by_id(comment_id)
+        except ValueError as e:
+            raise Exception(status_code=404, detail=str(e))
+        return

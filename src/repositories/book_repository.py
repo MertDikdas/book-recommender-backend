@@ -25,3 +25,6 @@ class BookRepository(ABC):
 
     @abstractmethod
     def get_comments_by_book_id(self, book_id:int) -> list[CommentEntity]: ...
+
+    @abstractmethod
+    def delete_comment_by_id(self,comment_id:int): ...

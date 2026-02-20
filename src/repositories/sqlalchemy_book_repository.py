@@ -1,6 +1,7 @@
 from typing import Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
+from sqlalchemy.exc import OperationalError
 from src.domains.entities import BookEntity, CommentEntity
 from src.repositories.book_repository import BookRepository
 from src.domains.orm import BookORM, CommentORM
@@ -74,3 +75,13 @@ class SqlAlchemyBookRepository(BookRepository):
     def get_comments_by_book_id(self, book_id:int) -> list[CommentEntity]:
         comments = self.db.query(CommentORM).filter_by(book_id=book_id).all()
         return [_comment_orm_to_entity(orm) for orm in comments]
+    
+    def delete_comment_by_id(self, comment_id:int):
+        try:
+            comment = self.db.query(CommentORM).filter(CommentORM.id == comment_id).first()
+            if comment:
+                self.db.delete(comment)
+            self.db.commit()
+        except OperationalError:
+            self.db.rollback()
+            raise
