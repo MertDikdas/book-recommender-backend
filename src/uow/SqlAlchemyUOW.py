@@ -35,6 +35,7 @@ class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
 
     def commit(self) -> None:
         if self.session:
+            print("Succesfull")
             self.session.commit()
 
     def rollback(self) -> None:

@@ -21,7 +21,7 @@ def list_all_books(service: BookService = Depends(get_book_service)):
     return books
 
 @router.get("/by-title/{book_name}", response_model=BookOut)
-def get_book_by_name(book_name: str, 
+def get_book_by_title(book_name: str, 
                      service: BookService = Depends(get_book_service)):
     
     book = service.get_book_by_title(book_name)

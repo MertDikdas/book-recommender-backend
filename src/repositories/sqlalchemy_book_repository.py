@@ -24,10 +24,7 @@ class SqlAlchemyBookRepository(BookRepository):
             description=book.description,
             genre=book.genre,
         )
-        self.db.add(orm)
         self.db.flush()   # id oluşsun
-        self.db.refresh(orm)
-        self.db.commit()
         return _book_orm_to_entity(orm)
     
     # Listing all books
@@ -63,8 +60,7 @@ class SqlAlchemyBookRepository(BookRepository):
     def add_comment(self, book_id: int, user_id: int, comment_text: str) -> CommentEntity:
         comment = CommentORM(book_id=book_id, user_id=user_id, comment_text=comment_text)
         self.db.add(comment)
-        self.db.commit()
-        self.db.refresh(comment)
+        self.db.flush()
         return CommentEntity(
             id=comment.id,
             book_id=comment.book_id,
@@ -81,7 +77,5 @@ class SqlAlchemyBookRepository(BookRepository):
             comment = self.db.query(CommentORM).filter(CommentORM.id == comment_id).first()
             if comment:
                 self.db.delete(comment)
-            self.db.commit()
         except OperationalError:
-            self.db.rollback()
             raise

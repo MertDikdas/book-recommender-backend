@@ -20,7 +20,6 @@ class SqlAlchemyUserRepository(UserRepository):
         self.db.add(orm)
         self.db.flush()   # id oluşsun
         self.db.refresh(orm)
-        self.db.commit()
         return _user_orm_to_entity(orm)
     
     def get_by_id(self, user_id: int) -> Optional[UserEntity]:
@@ -32,7 +31,5 @@ class SqlAlchemyUserRepository(UserRepository):
             user = self.db.query(UserORM).filter(UserORM.username == username).first()
             if user:
                 self.db.delete(user)
-            self.db.commit()
         except OperationalError:
-            self.db.rollback()
             raise

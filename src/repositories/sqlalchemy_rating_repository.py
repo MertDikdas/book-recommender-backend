@@ -28,7 +28,6 @@ class SqlAlchemyRatingRepository(RatingRepository):
         self.db.add(orm)
         self.db.flush()
         self.db.refresh(orm)
-        self.db.commit()
         return _rating_orm_to_entity(orm)
 
     def update(self, rating: RatingEntity) -> RatingEntity:
@@ -40,10 +39,9 @@ class SqlAlchemyRatingRepository(RatingRepository):
         if orm is None:
             raise ValueError("Rating not found")
 
-        orm.rating = rating.value
+        orm.rating = rating.rating
         self.db.flush()
         self.db.refresh(orm)
-        self.db.commit()
         return _rating_orm_to_entity(orm)
     
     def get_for_user(self, user_id: int) -> list[RatingEntity]:
@@ -54,4 +52,3 @@ class SqlAlchemyRatingRepository(RatingRepository):
         orm = self.db.query(RatingORM).filter_by(id=rating_id).first()
         if orm:
             self.db.delete(orm)
-            self.db.commit()

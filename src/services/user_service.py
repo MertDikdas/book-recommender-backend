@@ -13,59 +13,59 @@ class UserService:
 
     def create_user(self, username: str) -> Optional[UserEntity]:
         with self.uow as uow:
-            existing = self.uow.users.get_by_username(username)
+            existing = uow.users.get_by_username(username)
             if existing:
                 return None
 
             user = UserEntity(id=None, username=username)
-            user = self.uow.users.add(user)
+            user = uow.users.add(user)
             uow.commit()
             return user
 
     def get_user(self, username: str) -> Optional[UserEntity]:
         with self.uow as uow:
-            return self.uow.users.get_by_username(username)
+            return uow.users.get_by_username(username)
     
     # Getting books by user service
     def get_user_books(self, username: str) -> Iterable[BookEntity]:
         with self.uow as uow:
-            user = self.uow.users.get_by_username(username)  # Ensure user exists, can raise exception if not found
+            user = uow.users.get_by_username(username)  # Ensure user exists, can raise exception if not found
             if not user:
                 raise ValueError(f"User with username '{username}' not found")
             user_id = user.id
-            ratings = self.uow.ratings.get_for_user(user_id)
+            ratings = uow.ratings.get_for_user(user_id)
             if ratings is None:
                 return []
             for rating in ratings:
-                book = self.uow.books.get_by_id(rating.book_id)
+                book = uow.books.get_by_id(rating.book_id)
                 if book:
                     yield book
     
     def delete_user(self, username: str) -> None:
         with self.uow as uow:
-            user = self.uow.users.get_by_username(username)
+            user = uow.users.get_by_username(username)
             if not user:
                 raise ValueError(f"User with username '{username}' not found")
-            self.uow.users.delete(username)
+            uow.users.delete(username)
             uow.commit()
 
     def get_user_genres(self, username: str) -> Iterable[str]:
         with self.uow as uow:
-            user = self.uow.users.get_by_username(username)  # Ensure user exists, can raise exception if not found
+            user = uow.users.get_by_username(username)  # Ensure user exists, can raise exception if not found
             if not user:
                 raise ValueError(f"User with username '{username}' not found")
             user_id = user.id
-            ratings = self.uow.ratings.get_for_user(user_id)
+            ratings = uow.ratings.get_for_user(user_id)
             if ratings is None:
                 return []
             genres = set()
             for rating in ratings:
-                book = self.uow.books.get_by_id(rating.book_id)
+                book = uow.books.get_by_id(rating.book_id)
                 if book and book.genre:
                     genres.update(genre.strip() for genre in book.genre.split(";"))
             return genres
     
     def get_user_by_id(self, user_id:int) -> Optional[UserEntity]:
         with self.uow as uow:
-            user = self.uow.users.get_by_id(user_id)
+            user = uow.users.get_by_id(user_id)
             return user
