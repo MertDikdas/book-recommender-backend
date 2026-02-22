@@ -38,6 +38,7 @@ class BookService:
                 return []
             return uow.books.search_books(query)
     
+    # Creates a book comment service
     def create_comment(self, book_id:int , username:str, comment_text:str) -> CommentEntity:
         with self.uow as uow:
             book = uow.books.get_by_id(book_id)
@@ -50,6 +51,7 @@ class BookService:
             uow.commit()
             return comment
     
+    #Gets the all comments for a book service
     def get_comments_by_book_id(self, book_id:int) -> list[CommentEntity]:
         with self.uow as uow:
             book = uow.books.get_by_id(book_id)
@@ -58,6 +60,7 @@ class BookService:
             comments = uow.books.get_comments_by_book_id(book_id)
             return comments
     
+    #Deletes comments by comment_id
     def delete_comment_by_id(self, comment_id:int):
         with self.uow as uow:
             try:

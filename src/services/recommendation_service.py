@@ -4,7 +4,7 @@ from src.uow.AbstractUOW import AbstractUnitOfWork
 class RecommendationService:
     def __init__(self, uow: AbstractUnitOfWork):
         self.uow = uow
-
+    #Get recommendations for user for all books in user's library
     def get_recommendations_for_user(self, user_name: str, page_number:int, top_k: int = 20) -> list[BookEntity] | None:
         with self.uow as uow:
             # Fetch user ratings
@@ -22,7 +22,7 @@ class RecommendationService:
         
         
         return recommend_for_user(user_ratings, user_books, min_k=(page_number-1)*top_k, max_k=page_number*top_k)
-    
+    #Get  recommendations based on a specific genre which user has book in this genre
     def get_recommendations_for_user_by_genre(self, user_name: str, genre: str, page_number: int , top_k: int = 20) -> list[BookEntity] | None:
         with self.uow as uow:
             # Fetch user ratings

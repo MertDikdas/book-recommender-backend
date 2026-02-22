@@ -64,7 +64,7 @@ class RatingService:
             # 2) get ratings
             ratings = uow.ratings.get_for_user(user.id)
             return ratings
-    
+    #Deletes user's rating for a book
     def delete_user_book(self, username: str, book_id: int) -> bool:
         with self.uow as uow:
             user = uow.users.get_by_username(username)

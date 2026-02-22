@@ -1,5 +1,5 @@
 
-from scripts.fetch_openlibrary import fetch_subject, SUBJECTS, LIMIT_PER_SUBJECT, PER_REQUEST_LIMIT, fetch_tr_books
+from backend.src.api.open_library_api.fetch_openlibrary import fetch_subject, SUBJECTS, LIMIT_PER_SUBJECT, PER_REQUEST_LIMIT, fetch_tr_books
 import time
 from src.mappers.json_to_book import JsonToBookMapper
 from src.database.database import SessionLocal
@@ -33,14 +33,17 @@ def save_books_to_db(data,works):
     db.close()
 
 if __name__ == "__main__":
+    #FOR ENGLISH BOOKS
+    for subject in SUBJECTS:
+        print(f"Fetching subject: {subject}")
+        for offset in range(0, LIMIT_PER_SUBJECT, PER_REQUEST_LIMIT):
+           data = fetch_subject(subject, PER_REQUEST_LIMIT, offset)
+           save_books_to_db(data,"works")
+    #FOR TURKISH BOOKS 
     for page in range(1, 51):  # 50 sayfa * 100 = 5000 kitap
         data = fetch_tr_books(query="subject:literature language:tur", page=page, limit=100)
         save_books_to_db(data,"docs");
         print("page", page, "docs", len(data))
         time.sleep(0.2)
-    #for subject in SUBJECTS:
-    #    print(f"Fetching subject: {subject}")
-    #    for offset in range(0, LIMIT_PER_SUBJECT, PER_REQUEST_LIMIT):
-    #       data = fetch_subject(subject, PER_REQUEST_LIMIT, offset)
-    #       save_books_to_db(data,"works")
-    #print("Seeding completed.")
+
+    print("Seeding completed.")
