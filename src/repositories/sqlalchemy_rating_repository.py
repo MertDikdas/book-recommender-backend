@@ -27,7 +27,6 @@ class SqlAlchemyRatingRepository(RatingRepository):
         )
         self.db.add(orm)
         self.db.flush()
-        self.db.refresh(orm)
         return _rating_orm_to_entity(orm)
 
     def update(self, rating: RatingEntity) -> RatingEntity:
