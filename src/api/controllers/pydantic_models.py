@@ -1,5 +1,6 @@
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Optional, Text
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+from typing import Optional
+import math
 
 
 #Pydantic models
@@ -32,6 +33,7 @@ class UserOut(BaseModel):
     username: str
     model_config = ConfigDict(from_attributes=True)
     
+
 class BookOut(BaseModel):
     id: int
     work_key: str
@@ -43,6 +45,26 @@ class BookOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+    @field_validator("img_cover_url", mode="before")
+    @classmethod
+    def convert_nan_to_none(cls, v):
+        if v is None:
+            return None
+
+        # pandas / numpy nan kontrolü
+        try:
+            import pandas as pd
+            if pd.isna(v):
+                return None
+        except Exception:
+            pass
+
+        # float nan kontrolü
+        if isinstance(v, float) and math.isnan(v):
+            return None
+
+        return str(v)
+    
 class CommentOut(BaseModel):
     id: int
     user_id: int

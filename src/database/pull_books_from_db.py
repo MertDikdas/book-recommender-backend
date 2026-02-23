@@ -16,4 +16,5 @@ def pull_books_from_db(db: Session) -> pd.DataFrame:
             "img_cover_url": book.img_cover_url
         })
     df = pd.DataFrame(data)
+    df = df.where(pd.notnull(df), None)
     return df
