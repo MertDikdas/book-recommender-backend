@@ -51,7 +51,7 @@ def get_user_books(
     username: str,
     service: UserService = Depends(get_user_service),
 ):
-    books = service.get_user_books(username)
+    books = list(service.get_user_books(username))
 
     if not books:
         raise HTTPException(status_code=404, detail="User has no books")

@@ -31,7 +31,7 @@ class UserService:
         with self.uow as uow:
             user = uow.users.get_by_username(username)  # Ensure user exists, can raise exception if not found
             if not user:
-                raise ValueError(f"User with username '{username}' not found")
+                return []
             user_id = user.id
             ratings = uow.ratings.get_for_user(user_id)
             if ratings is None:
@@ -40,6 +40,7 @@ class UserService:
                 book = uow.books.get_by_id(rating.book_id)
                 if book:
                     yield book
+
     #Delete user by username
     def delete_user(self, username: str) -> None:
         with self.uow as uow:
