@@ -40,7 +40,6 @@ class SqlAlchemyRatingRepository(RatingRepository):
 
         orm.rating = rating.rating
         self.db.flush()
-        self.db.refresh(orm)
         return _rating_orm_to_entity(orm)
     
     def get_for_user(self, user_id: int) -> list[RatingEntity]:
