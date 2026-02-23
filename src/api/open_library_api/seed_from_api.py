@@ -1,5 +1,5 @@
 
-from backend.src.api.open_library_api.fetch_openlibrary import fetch_subject, SUBJECTS, LIMIT_PER_SUBJECT, PER_REQUEST_LIMIT, fetch_tr_books
+from src.api.open_library_api.fetch_openlibrary import fetch_subject, SUBJECTS, LIMIT_PER_SUBJECT, PER_REQUEST_LIMIT, fetch_tr_books
 import time
 from src.mappers.json_to_book import JsonToBookMapper
 from src.database.database import SessionLocal

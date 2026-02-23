@@ -10,7 +10,10 @@ python -m venv venv
 source venv/bin/activate  # Mac/Linux
 3️⃣ Install dependencies
 pip install -r requirements.txt
-4️⃣ Run the server
+4️⃣ Pull books from open library
+python -m src.database.create_db #Database creation
+python -m src.api.open_library_api.seed_from_api #Pull book from open lib. to database
+**Run the server**
 uvicorn src.api.api:app --reload
 Server runs at:
 http://127.0.0.1:8000
