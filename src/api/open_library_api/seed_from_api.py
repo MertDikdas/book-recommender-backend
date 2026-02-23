@@ -43,7 +43,7 @@ if __name__ == "__main__":
     for page in range(1, 51):  # 50 sayfa * 100 = 5000 kitap
         data = fetch_tr_books(query="subject:literature language:tur", page=page, limit=100)
         save_books_to_db(data,"docs");
-        print("page", page, "docs", len(data))
+        print("page", page, "docs")
         time.sleep(0.2)
 
     print("Seeding completed.")

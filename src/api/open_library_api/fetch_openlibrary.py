@@ -5,9 +5,8 @@ from urllib3.util.retry import Retry
 
 # Define constants
 SUBJECTS = ["fantasy", "science_fiction", "romance", "history","literature","mystery_and_detective_stories", "juvenile_literature",
-             "autobiography","programming","psychology","poetry","short_stories","young_adult_fiction", "biology", "chemistry","mathematics",
-             "business__economics", "finance", "ancient_civilization","archaeology","cooking"]
-LIMIT_PER_SUBJECT = 15000
+             "autobiography","programming","psychology","poetry","short_stories","young_adult_fiction", "ancient_civilization"]
+LIMIT_PER_SUBJECT = 12000
 PER_REQUEST_LIMIT = 1000
 BASE_URL = "https://openlibrary.org"
 BASE_TURKISH = "https://openlibrary.org/search.json"
