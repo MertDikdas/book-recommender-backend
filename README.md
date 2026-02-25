@@ -1,6 +1,8 @@
 ## Book Recommender – Backend
 Backend service of a Book Recommender System built with FastAPI and SQLAlchemy.
 This API provides book management, rating, comment handling, and user-book relationship tracking.
+If you install book-recommender-frontend you can access full version of this application. https://github.com/MertDikdas/book-recommender-frontend.git
+
 
 ## System Requirements
 
@@ -76,5 +78,6 @@ Comments
 Mert Dikdaş
 Computer Engineering Student
 Ege University
+
 
 
