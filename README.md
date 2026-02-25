@@ -2,6 +2,13 @@
 Backend service of a Book Recommender System built with FastAPI and SQLAlchemy.
 This API provides book management, rating, comment handling, and user-book relationship tracking.
 
+## System Requirements
+
+- Python 3.9+
+- Git
+- bash (if your os is Windows you can use git bash)
+- pip
+
 ## Installation
 ## Clone repository
 ```bash
@@ -10,8 +17,12 @@ cd book-recommender-backend
 ```
 ## Create virtual environment (optional but recommended)
 ```bash
-python -m venv venv
-source venv/bin/activate  # Mac/Linux
+python -m venv .venv
+source .venv/bin/activate  # Mac/Linux
+```
+```bash
+python -m venv .venv
+source .venv/Scripts/Activate # Windows
 ```
 ## Install dependencies
 ```bash
@@ -65,4 +76,5 @@ Comments
 Mert Dikdaş
 Computer Engineering Student
 Ege University
+
 
